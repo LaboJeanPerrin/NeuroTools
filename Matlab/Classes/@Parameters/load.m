@@ -20,9 +20,9 @@ end
 % === Checks ==============================================================
 
 if isempty(in.filename)
-    tmp = uigetfile('*.txt', 'Select a parameter file');
-    if ischar(tmp)
-        in.filename = tmp;
+    [tmp, pname] = uigetfile('*.txt', 'Select a parameter file');
+     if ischar(tmp)
+        in.filename = [pname tmp];
     else
         return
     end
@@ -108,10 +108,10 @@ for i = 1:numel(File)
         case 'Folders'
             
             % Root
-            res = regexp(line, '^Root\s+([0-9\.]+)\s+(.*)', 'tokens');
+            res = regexp(line, '^Root\s+([^\s]+)\s+(.*)', 'tokens');
             if ~isempty(res)
                 [~, hostname] = system('hostname');
-                if strcmp(hostname, res{1}{2})
+                if strcmp(strtrim(hostname), res{1}{1})
                     this.Root = res{1}{2};
                 end
             end
