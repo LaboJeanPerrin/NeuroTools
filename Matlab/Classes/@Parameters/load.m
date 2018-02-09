@@ -108,14 +108,11 @@ for i = 1:numel(File)
         case 'Folders'
             
             % Root
-            res = regexp(line, '^Root\s+([^\s]+)\s+(.*)', 'tokens');
+            res = regexp(line, '^DataRoot +(.+)', 'tokens');
             if ~isempty(res)
-                [~, hostname] = system('hostname');
-                if strcmp(strtrim(hostname), res{1}{1})
-                    this.Root = res{1}{2};
-                end
+                this.DataRoot = strtrim(res{1}{1});
             end
-            
+                        
         case 'Images'
             
             % Camera model

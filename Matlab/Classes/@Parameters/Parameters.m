@@ -10,7 +10,7 @@ classdef Parameters < handle
         Description
 
         % --- Folders
-        Root
+        DataRoot
         
         % --- Images
         CameraModel
