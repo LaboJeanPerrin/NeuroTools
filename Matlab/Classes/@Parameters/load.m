@@ -105,6 +105,14 @@ for i = 1:numel(File)
                 this.RunName = res{1}{1};
             end
             
+        case 'Window'
+            
+            % Screen
+            res = regexp(line, '^Screen +(.+)', 'tokens');
+            if ~isempty(res)
+                this.Screen = str2double(strtrim(res{1}{1}));
+            end 
+            
         case 'Folders'
             
             % Root

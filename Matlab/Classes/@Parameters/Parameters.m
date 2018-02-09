@@ -9,6 +9,9 @@ classdef Parameters < handle
         RunName
         Description
 
+        % --- Window
+        Screen = 1;
+        
         % --- Folders
         DataRoot
         
