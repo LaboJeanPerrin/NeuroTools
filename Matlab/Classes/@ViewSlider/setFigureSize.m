@@ -13,9 +13,12 @@ set(this.axes, 'position', [0 this.sliderHeight this.dispWidth this.dispHeight])
 drawnow
           
 fpos = get(this.fig, 'Position');
-wsize = [this.dispWidth this.dispHeight+this.sliderHeight];
+wsize = [this.dispWidth this.infosHeight+this.dispHeight+this.sliderHeight];
 set(this.fig, 'Position', [fpos(1:2)+fpos(3:4)/2-wsize/2 wsize]);
            
+set(this.info.imageNumber, 'position', [5 this.sliderHeight+this.dispHeight this.dispWidth/6 this.infosHeight-4]);
+set(this.info.pixelInfo, 'position', [this.dispWidth/3 this.sliderHeight+this.dispHeight this.dispWidth/3 this.infosHeight-4]);
+
 set(this.slider, 'position', [0 0 this.dispWidth this.sliderHeight]);
 
 % Update image

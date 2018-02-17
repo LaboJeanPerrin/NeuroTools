@@ -9,11 +9,14 @@ classdef ViewSlider<handle
         fig
         axes
         img
+        info
         slider
         
+        infosHeight
+        sliderHeight
         dispWidth
         dispHeight
-        sliderHeight
+        bgcolor
         
         zoom
         Nframes = NaN;
@@ -39,7 +42,9 @@ classdef ViewSlider<handle
             
             % --- Parameters ----------------------------------------------
             
+            this.infosHeight = 20;
             this.sliderHeight = 20;
+            this.bgcolor = [1 1 1]*0.15;
             
             % --- Define stack structure ----------------------------------
             
