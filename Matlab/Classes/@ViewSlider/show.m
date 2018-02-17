@@ -7,12 +7,16 @@ if isempty(this.stack)
     return
 end
 
+% --- Get screen size
+ screensize = get( groot, 'Screensize' )
+ 
 % --- Create figure, axes and uicontrols
 
 % Figure
 this.fig = figure('Name', 'ViewSlider', ...
     'menuBar', 'none',  ...
     'Units', 'pixels', ...
+    'Position', [screensize(3:4)/2 0 0], ...
     'WindowKeyPressFcn', @(~,e) this.keypressed(e));
 
 % Axes

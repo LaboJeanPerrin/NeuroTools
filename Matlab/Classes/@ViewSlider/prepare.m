@@ -9,8 +9,3 @@ for i = 1:numel(this.stack)
         Out(:,:,c) = Out(:,:,c) + tmp*this.stack(i).color(c);
     end
 end
-
-% this.stack(1).data)
-% 
-% Out = uint8((double(In)-this.range(1))/(this.range(2)-this.range(1))*255);
-% Out = repmat(Out, [1 1 3]);
