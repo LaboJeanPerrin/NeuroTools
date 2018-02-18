@@ -4,12 +4,12 @@ function keypressed(this, event)
 switch event.Key
     
     case 'escape'
-        close(this.fig)
+        close(this.figure)
         return
         
     case 'numlock'
         this.autoRange;
-        this.update;
+        this.updateVisu;
         
     case 'pageup'
     case 'pagedown'
@@ -30,31 +30,31 @@ switch event.Key
                 
             case '1'
                 this.range(1) = this.range(1)/0.8;
-                this.update;
+                this.updateVisu;
                 
             case '3'
                 this.range(2) = this.range(2)/0.8;
-                this.update;
+                this.updateVisu;
             
             case '5'
                 set(this.slider, 'Value', floor(get(this.slider, 'max')/2));
-                this.update
+                this.updateVisu;
                 
             case '7'
                 this.range(1) = this.range(1)*0.8;
-                this.update;
+                this.updateVisu;
                 
             case '9'
                 this.range(2) = this.range(2)*0.8;
-                this.update;
+                this.updateVisu;
             
             case '/'
                 set(this.slider, 'Value', max(get(this.slider, 'Value')-1, get(this.slider, 'Min')));
-                this.update
+                this.updateVisu;
             
                 case '*'
                 set(this.slider, 'Value', min(get(this.slider, 'Value')+1, get(this.slider, 'Max')));
-                this.update
+                this.updateVisu;
             
             otherwise
                 event

@@ -4,22 +4,30 @@ classdef Viewer<handle
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
         
-        stack
+        stacks
         
-        fig
-        axes
-        img
+        mode
+        figure
+        visu
+        image
         info
         slider
         
+        bgcolor
+        visuWidth
+        visuHeight
         infosHeight
         sliderHeight
-        dispWidth
-        dispHeight
-        bgcolor
         
+        x = NaN
+        y = NaN
+        z = NaN
+        t = NaN
+        X = NaN
+        Y = NaN
+        Z = NaN
+        T = NaN
         zoom
-        Nframes = NaN;
         
     end
     
@@ -46,9 +54,17 @@ classdef Viewer<handle
             this.sliderHeight = 20;
             this.bgcolor = [1 1 1]*0.15;
             
-            % --- Define stack structure ----------------------------------
+            % --- Define stacks structure ---------------------------------
             
-            this.stack = struct('data', {}, 'range', {}, 'color', {});
+            %   mode:   'xy', 'xyt', 'xyz' or 'xyzt'
+            %   type:   'array' or 'paf'
+            %   data:   An array or a NT.Paf object
+            %   size:   A size array
+            %   range:  A 2-element vector (intensities range)
+            %   color:  A 3-element vector (RGB)
+            
+            this.stacks = struct('mode', {}, 'type', {}, 'size', {}, ...
+                'data', {}, 'range', {}, 'color', {});
             
         end
             

@@ -2,18 +2,19 @@ function show(this)
 
 % --- Checks --------------------------------------------------------------
 
-if isempty(this.stack)
+if isempty(this.stacks)
     warning('ViewSlider:NoStack', 'There is no stack to show.');
     return
 end
 
-% --- Get screen size
- screensize = get( groot, 'Screensize');
- 
-% --- Create figure, axes and uicontrols
+% --- Create figure, axes and uicontrols ----------------------------------
 
-% Figure
-this.fig = figure('Name', 'ViewSlider', ...
+% Get screen size
+screensize = get(groot, 'Screensize');
+ 
+% --- Figure
+
+this.figure = figure('Name', 'ViewSlider', ...
     'menuBar', 'none',  ...
     'Color', this.bgcolor, ...
     'Units', 'pixels', ...
@@ -21,30 +22,36 @@ this.fig = figure('Name', 'ViewSlider', ...
     'WindowButtonMotionFcn', @(~,~) this.updatePixelInfo, ...
     'WindowKeyPressFcn', @(~,e) this.keypressed(e));
 
-% Axes
-this.axes = axes('Units', 'pixels', 'visible', 'off', ...
+% --- Visualization area
+
+this.visu = axes('Units', 'pixels', 'visible', 'off', ...
     'ActivePositionProperty', 'position', ...
     'xlimmode','manual', 'ylimmode','manual', ...
     'zlimmode','manual', 'climmode','manual', ...
     'alimmode','manual');
 
-% Infos
-this.info = struct('imageNumber', uicontrol(this.fig, 'Style', 'text', 'BackgroundColor', this.bgcolor, 'ForegroundColor', [1 1 1], 'FontName', 'FixedWidth', 'HorizontalAlignment', 'left'), ...
-    'pixelInfo', uicontrol(this.fig, 'Style', 'text', 'BackgroundColor', this.bgcolor, 'ForegroundColor', [1 1 1], 'FontName', 'FixedWidth', 'HorizontalAlignment', 'center'));
+% --- Info area
 
-% Slider
-this.slider = uicontrol('style','slider', 'units', 'pixel', ...
-    'Min', 1, 'Max', this.Nframes, 'Value', 1, ...
-    'SliderStep', [1 10]/(this.Nframes - 1));
-addlistener(this.slider, 'Value', 'PostSet', @(~,~) this.update);
+this.info = struct(...
+    'imageNumber', uicontrol(this.figure, 'Style', 'text', 'BackgroundColor', this.bgcolor, 'ForegroundColor', [1 1 1], 'FontName', 'FixedWidth', 'HorizontalAlignment', 'left'), ...
+    'pixelInfo', uicontrol(this.figure, 'Style', 'text', 'BackgroundColor', this.bgcolor, 'ForegroundColor', [1 1 1], 'FontName', 'FixedWidth', 'HorizontalAlignment', 'center'));
 
-% --- Rendering settings
+% --- Slider
+
+if ~isnan(this.T)
+    this.slider = uicontrol('style','slider', 'units', 'pixel', ...
+        'Min', 1, 'Max', this.T, 'Value', 1, ...
+        'SliderStep', [1 10]/(this.T-1));
+    addlistener(this.slider, 'Value', 'PostSet', @(~,~) this.updateVisu);
+end
+
+% --- Rendering settings --------------------------------------------------
 
 % Speed optimization
-set(this.fig,'doublebuffer','off');
+set(this.figure, 'doublebuffer', 'off');
 
 % Grey levels
 colormap(gray(256));
 
-% --- Set figure size and display first image
+% Set figure size and display first image
 this.setFigureSize();
