@@ -6,8 +6,22 @@ this.visuWidth = 0;
 this.visuHeight = 0;
 
 for i = 1:numel(this.stacks)
-    this.visuWidth = max(this.visuWidth, ceil(this.stacks(i).size(2)/this.zoom));
-    this.visuHeight = max(this.visuHeight, ceil(this.stacks(i).size(1)/this.zoom));
+    switch this.stacks(i).mode
+        
+        case {'xy', 'xyt'}
+            
+            W = ceil(this.stacks(i).size(2)/this.zoom);
+            H = ceil(this.stacks(i).size(1)/this.zoom);
+            
+        case {'xyz', 'xyzt'}
+            
+            W = ceil(this.stacks(i).size(1)/this.zoom) + ceil(this.stacks(i).size(2)/this.zoom);
+            H = ceil(this.stacks(i).size(1)/this.zoom) + ceil(this.stacks(i).size(3)/this.zoom);
+            
+    end
+    
+    this.visuWidth = max(this.visuWidth, W);
+    this.visuHeight = max(this.visuHeight, H);
 end
 
 % --- Update figure and axes sizes ----------------------------------------
