@@ -1,5 +1,5 @@
-classdef ViewSlider<handle
-%ViewSliderClass to view 3D arrays with a slider
+classdef Viewer<handle
+%NT.Viewer Class to visualize data
 
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
@@ -27,8 +27,8 @@ classdef ViewSlider<handle
     methods
         
         % _________________________________________________________________
-        function this = ViewSlider(varargin)
-        %ViewSlider::constructor
+        function this = Viewer(varargin)
+        %NT.Viewer Constructor
         
             % --- Inputs --------------------------------------------------
             
