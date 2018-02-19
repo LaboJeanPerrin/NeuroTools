@@ -29,12 +29,12 @@ classdef Focus<handle
         
             % --- Inputs --------------------------------------------------
             
-            in = ML.Input;
-            in.study = @ischar;
-            in.date = @ischar;
-            in.run = @(x) ischar(x) || isnumeric(x);
-            in.verbose(false) = @islogical;
-            in = +in;
+            in = inputParser;
+            in.addRequired('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
+            in.addOptional('study', '', @ischar);
+            in.addOptional('date', '', @ischar);
+            in.addOptional('run', '', @(x) ischar(x) || isnumeric(x));
+            in.addOptional('verbose', false, @islogical);
                     
             % --- Basic properties ----------------------------------------
             
@@ -51,12 +51,11 @@ classdef Focus<handle
             % --- Directories ---------------------------------------------
         
             % Preparation
-            proj = ML.Projects.select;
             this.dir = struct();
             
             % --- Data dir
             
-            this.dir.data = [proj.path 'Data' filesep this.study filesep this.date filesep this.run filesep];
+            this.dir.data = [in.path 'Data' filesep this.study filesep this.date filesep this.run filesep];
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
@@ -67,18 +66,19 @@ classdef Focus<handle
             
             this.dir.images = [this.dir.data 'Images' filesep];
             this.dir.files = [this.dir.data 'Files' filesep];
-            this.dir.figures = [proj.path 'Figures' filesep];
-            this.dir.movies = [proj.path 'Movies' filesep];
+            this.dir.figures = [in.path 'Figures' filesep];
+            this.dir.movies = [in.path 'Movies' filesep];
             
             % --- Parameters ----------------------------------------------
             
             P = Parameters;
             P.load([this.dir.data 'Parameters.txt']);
-            
-            kvufile = [this.dir.data 'KVU.txt'];
-            if exist(kvufile, 'file')
-                P.load_KVU(kvufile);
-            end
+       
+% What is this ?
+%             kvufile = [this.dir.data 'KVU.txt'];
+%             if exist(kvufile, 'file')
+%                 P.load_KVU(kvufile);
+%             end
                         
             % --- Checks
                         
@@ -135,14 +135,14 @@ classdef Focus<handle
                     this.param.NFrames = P.NFrames;
                     this.param.RunTime = P.RunTime;
                     
-                    % --- KVU parameters
-                    keys = fieldnames(P.KVU);
-                    for i = 1:numel(keys)
-                        this.param.(keys{i}) = P.KVU.(keys{i});
-                        if isfield(P.Units.KVU, keys{i})
-                            this.units.KVU.(keys{i}) = P.Units.KVU.(keys{i});
-                        end
-                    end
+%                     % --- KVU parameters
+%                     keys = fieldnames(P.KVU);
+%                     for i = 1:numel(keys)
+%                         this.param.(keys{i}) = P.KVU.(keys{i});
+%                         if isfield(P.Units.KVU, keys{i})
+%                             this.units.KVU.(keys{i}) = P.Units.KVU.(keys{i});
+%                         end
+%                     end
                     
                     % --- Signals
                     this.stim = P.Signals;
@@ -200,17 +200,6 @@ classdef Focus<handle
             % --- Default set
             this.select(1);
             
-            % --- Current Focus -------------------------------------------
-
-            % --- Define as current focus
-            gname = 'NeuroTools';
-            ML.Session.set(gname, 'Focus', this);
-
-            % --- Verbose
-            if in.verbose
-                ML.CW.print('The current focus is now ~bc[teal]{%s}.\n', this.name);
-            end
-            
         end
     end
     
@@ -218,6 +207,5 @@ classdef Focus<handle
     methods (Static)
       define(varargin)
       F = current()
-      F = getFocus(p_date, p_run)
    end
 end
