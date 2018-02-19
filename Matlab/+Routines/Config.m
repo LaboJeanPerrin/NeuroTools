@@ -21,26 +21,25 @@ disp('No config file found, generating one');
 
 
 
-% === Default values ======================================================
+% === Initialize config ===================================================
 
-units = struct('dx', 'um', ...
+config.units = struct('dx', 'um', ...
     'dy', 'um', ...
     'dt', 'ms', ...
     'z', 'um', ...
     't', 'ms', ...
     'exposure', 'ms');
 
-% --- Initialize with default parameters
+config.exposure = F.param.Exposure;
+config.dt = F.param.Delay; % TODO verify
 
-config = struct('dx', NaN, ...
-    'dy', NaN, ...
-    'dt', dt, ...
-    'exposure', exposure, ...
-    'units', units);
+config.dx = NaN;
+config.dy = NaN;
+
+% === Getting values ======================================================
 
 % --- Prepare images list
-    images = dir([F.Images '*.' ext]);
-
+images = dir(fullfile(F.dir.images, ['*.' ext]));
 
 % Get Image Processing parameters
 tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
@@ -48,7 +47,7 @@ config.IP.prefix = tmp{1}{1};
 config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
 config.IP.extension = tmp{1}{3};
 
-tmp = imfinfo([F.Images images(1).name]);
+tmp = imfinfo(fullfile(F.dir.images, images(1).name));
 
 config.IP.date = tmp.FileModDate;
 config.IP.width = tmp.Width;
@@ -69,27 +68,60 @@ switch tmp.Software
     otherwise
         config.IP.camera = 'default';
 end
-tmp = Image([F.Images images(round(numel(images)/2)).name]);
+tmp = Image([F.Images images(round(numel(images)/2)).name]); %% TODO F.dir.images ....
 config.IP.range = tmp.autorange;
 
 % Define sets
 config.sets = struct('id', {}, 'type', {}, 'frames', {}, 't', {}, 'z', {});
-                
-% Assign parameters to current config
-config.exposure = F.param.Exposure;
-config.dt = F.param.Delay; % TODO verify
 
   % Get existing frames
 frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x,...
     ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
           
+% --- automatic layers, linear
 
+% Number of layers
+    nL = F.param.NLayers;
+
+% Altitudes TODO verify
+    dz = F.param.Increment;
+
+for i = 1:nL
+
+    id = numel(config.sets)+1;
+    config.sets(id).id = id;
+
+    % Type
+    config.sets(id).type = 'Layer';
+
+    % Index
+    config.sets(id).frames = frames(i:nL:end);
+
+    % Times
+    config.sets(id).t = config.sets(id).frames*config.dt;
+
+    % Altitudes
+    config.sets(id).z = dz*(i-1);
+
+end
+
+
+
+
+
+% --- Save configuration TODO à remettre en forme
+
+save(confPath, conf)
+% Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
+% Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
+% Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
+% Conf.save('exposure', config.exposure, ['Exposure time (' config.units.exposure ')']);
+% Conf.save('sets', config.sets, 'Sets (layers and/or scans)');
+% Conf.save('IP', config.IP, 'Image processing parameters');
+% Conf.save('units', config.units, 'Summary of the units used in this configuration file');
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-
-        
 
 
 % % --- Preparation
@@ -302,210 +334,210 @@ frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x,...
 %             case 'n'
 %                 
 %                 line('New set');
-                id = numel(config.sets)+1;
-                config.sets(id).id = id;
-                
-                % Type
-                config.sets(id).type = choose_type();
-                
-                % Index
-                fprintf('Please enter the corresponding frame numbers (from %i to %i) [Enter for all]:\n', min(frames), max(frames));
-                tmp = input('?> ');
-                if isempty(tmp)
-                    config.sets(id).frames = frames;
-                else
-                    config.sets(id).frames = tmp;
-                end
-                
-                % Times
-                switch config.IP.camera 
-                    case 'Andor_iXon'
-                        config.sets(id).t = load([F.Images 'Times.txt']);
-                    otherwise
-                        config.sets(id).t = config.sets(id).frames*config.dt;
-                end
-                
-                % Altitudes
-                switch config.sets(id).type
-                    
-                    case 'Layer'
-                        
-                        fprintf('Please enter the layer altitude (%s) [Press enter for zero]:\n', config.units.z);
-                        tmp = input('?> ');
-                        if isempty(tmp)
-                            config.sets(id).z = 0;
-                        else
-                            config.sets(id).z = tmp;
-                        end
-                        
-                    case 'Scan'
-                        fprintf('Please enter the corresponding altitudes (%s):\n', config.units.z);
-                        config.sets(id).z = input('?> ');
-                end
-                
+%                 id = numel(config.sets)+1;
+%                 config.sets(id).id = id;
+%                 
+%                 % Type
+%                 config.sets(id).type = choose_type();
+%                 
+%                 % Index
+%                 fprintf('Please enter the corresponding frame numbers (from %i to %i) [Enter for all]:\n', min(frames), max(frames));
+%                 tmp = input('?> ');
+%                 if isempty(tmp)
+%                     config.sets(id).frames = frames;
+%                 else
+%                     config.sets(id).frames = tmp;
+%                 end
+%                 
+%                 % Times
+%                 switch config.IP.camera 
+%                     case 'Andor_iXon'
+%                         config.sets(id).t = load([F.Images 'Times.txt']);
+%                     otherwise
+%                         config.sets(id).t = config.sets(id).frames*config.dt;
+%                 end
+%                 
+%                 % Altitudes
+%                 switch config.sets(id).type
+%                     
+%                     case 'Layer'
+%                         
+%                         fprintf('Please enter the layer altitude (%s) [Press enter for zero]:\n', config.units.z);
+%                         tmp = input('?> ');
+%                         if isempty(tmp)
+%                             config.sets(id).z = 0;
+%                         else
+%                             config.sets(id).z = tmp;
+%                         end
+%                         
+%                     case 'Scan'
+%                         fprintf('Please enter the corresponding altitudes (%s):\n', config.units.z);
+%                         config.sets(id).z = input('?> ');
+%                 end
+%                 
 %                 % --- Delete set
 %             case 'd'
 %                 line('');
 %                 fprintf('Please enter the index of the set to delete:\n');
 %                 config.sets(input('?> ')) = [];
 %                 
-                % --- Automatic layers, linear
-            case 'l'
-                
-                if firstIteration == 0
-                    % dz
-                    [tf, i] = ismember('Z increment', param(:,1));
-                    if tf
-                        dz = param{i,2}.value;
-                        if strcmp(param{i,2}.unit, 'm')
-                            dz = dz*1000000;
-                        end
-                    else
-                        dz = 0;  % Volker 2017-05-22
-                    end
-                    % number of layers
-                    [tf, i] = ismember('Number of layers', param(:,1));
-                    if tf
-                        nL = param{i,2}.value;
-                    end
-                   
-                else
-                   
-               
-                    % Number of layers
-                    fprintf('Please enter the number of layers:\n');
-                    nL = input('?> ');
-
-                    % Altitudes
-                    fprintf('Please enter the altitude increment (%s):\n', config.units.z);
-                    dz = input('?> ');
-                end
-                
-                for i = 1:nL
-                    
-                    id = numel(config.sets)+1;
-                    config.sets(id).id = id;
-                    
-                    % Type
-                    config.sets(id).type = 'Layer';
-                    
-                    % Index
-                    config.sets(id).frames = frames(i:nL:end);
-                    
-                    % Times
-                    config.sets(id).t = config.sets(id).frames*config.dt;
-                    
-                    % Altitudes
-                    config.sets(id).z = dz*(i-1);
-                    
-                end
-                
-                
-                % --- Automatic layers, interleaved
-            case 'i'
-                
-                % Number of layers
-                fprintf('Please enter the number of layers:\n');
-                nL = input('?> ');
-                
-                % Altitudes
-                fprintf('Please enter the altitude increment (%s):\n', config.units.z);
-                dz = input('?> ');
-                
-                tmp = sortrows([[1:2:nL fliplr(2:2:nL)]' (1:nL)']);
-                I = tmp(:,2);
-                
-                for i = 1:nL
-                    
-                    id = numel(config.sets)+1;
-                    config.sets(id).id = id;
-                    
-                    % Type
-                    config.sets(id).type = 'Layer';
-                    
-                    % Index
-                    config.sets(id).frames = frames(I(i):nL:end);
-                    
-                    % Times
-                    config.sets(id).t = config.sets(id).frames*config.dt;
-                    
-                    % Altitudes
-                    config.sets(id).z = dz*(i-1);
-                    
-                end
-                
-                % --- Save parameters
-            case 's'
-                Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
-                Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
-                Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
-                Conf.save('exposure', config.exposure, ['Exposure time (' config.units.exposure ')']);
-                Conf.save('sets', config.sets, 'Sets (layers and/or scans)');
-                Conf.save('IP', config.IP, 'Image processing parameters');
-                Conf.save('units', config.units, 'Summary of the units used in this configuration file');
-                
-                quit = true;
-                break;
+%                 % --- Automatic layers, linear
+%             case 'l'
+%                 
+%                 if firstIteration == 0
+%                     % dz
+%                     [tf, i] = ismember('Z increment', param(:,1));
+%                     if tf
+%                         dz = param{i,2}.value;
+%                         if strcmp(param{i,2}.unit, 'm')
+%                             dz = dz*1000000;
+%                         end
+%                     else
+%                         dz = 0;  % Volker 2017-05-22
+%                     end
+%                     % number of layers
+%                     [tf, i] = ismember('Number of layers', param(:,1));
+%                     if tf
+%                         nL = param{i,2}.value;
+%                     end
+%                    
+%                 else
+%                    
+%                
+%                     % Number of layers
+%                     fprintf('Please enter the number of layers:\n');
+%                     nL = input('?> ');
+% 
+%                     % Altitudes
+%                     fprintf('Please enter the altitude increment (%s):\n', config.units.z);
+%                     dz = input('?> ');
+%                 end
+%                 
+%                 for i = 1:nL
+%                     
+%                     id = numel(config.sets)+1;
+%                     config.sets(id).id = id;
+%                     
+%                     % Type
+%                     config.sets(id).type = 'Layer';
+%                     
+%                     % Index
+%                     config.sets(id).frames = frames(i:nL:end);
+%                     
+%                     % Times
+%                     config.sets(id).t = config.sets(id).frames*config.dt;
+%                     
+%                     % Altitudes
+%                     config.sets(id).z = dz*(i-1);
+%                     
+%                 end
+%                 
+%                 
+%                 % --- Automatic layers, interleaved
+%             case 'i'
+%                 
+%                 % Number of layers
+%                 fprintf('Please enter the number of layers:\n');
+%                 nL = input('?> ');
+%                 
+%                 % Altitudes
+%                 fprintf('Please enter the altitude increment (%s):\n', config.units.z);
+%                 dz = input('?> ');
+%                 
+%                 tmp = sortrows([[1:2:nL fliplr(2:2:nL)]' (1:nL)']);
+%                 I = tmp(:,2);
+%                 
+%                 for i = 1:nL
+%                     
+%                     id = numel(config.sets)+1;
+%                     config.sets(id).id = id;
+%                     
+%                     % Type
+%                     config.sets(id).type = 'Layer';
+%                     
+%                     % Index
+%                     config.sets(id).frames = frames(I(i):nL:end);
+%                     
+%                     % Times
+%                     config.sets(id).t = config.sets(id).frames*config.dt;
+%                     
+%                     % Altitudes
+%                     config.sets(id).z = dz*(i-1);
+%                     
+%                 end
+%                 
+%                 % --- Save parameters
+%             case 's'
+%                 Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
+%                 Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
+%                 Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
+%                 Conf.save('exposure', config.exposure, ['Exposure time (' config.units.exposure ')']);
+%                 Conf.save('sets', config.sets, 'Sets (layers and/or scans)');
+%                 Conf.save('IP', config.IP, 'Image processing parameters');
+%                 Conf.save('units', config.units, 'Summary of the units used in this configuration file');
+%                 
+%                 quit = true;
+%                 break;
 %                 
 %             case 'q'
 %                 quit = true;
 %                 break;
 %                 
 %             otherwise
-                
-                % Check that the input is a number
-                if ~numel(a) || ~all(isstrprop(a, 'digit')), continue; end
-                
-                line(['Modifying set ' a]);
-                n = str2num(a);
-                
-                while true
-                    
-                    fprintf('Please choose an action:\n');
-                    
-                    fprintf('\t[t] - Change type (''%s'')\n', config.sets(n).type);
-                    fprintf('\t[i] - Change frames (%i elements)\n', numel(config.sets(n).frames));
-                    fprintf('\t[z] - Change altitudes (%i elements)\n', numel(config.sets(n).z));
-                    
-                    fprintf('\t[Enter] - Return\n');
-                    a = input('?> ', 's');
-                    
-                    switch a
-                        
-                        % Type
-                        case 't'
-                            line('');
-                            config.sets(n).type = choose_type();
-                            
-                            % Frames
-                        case 'i'
-                            line('');
-                            fprintf('Please enter the frame numbers:\n');
-                            config.sets(n).frames = input('?> ');
-                            
-                            % Altitudes
-                        case 'z'
-                            line('')
-                            fprintf('Please enter the altitudes (µm):\n');
-                            config.sets(n).z = input('?> ');
-                            
-                        otherwise
-                            break
-                            
-                    end
-                    
-                end
-                
+%                 
+%                 % Check that the input is a number
+%                 if ~numel(a) || ~all(isstrprop(a, 'digit')), continue; end
+%                 
+%                 line(['Modifying set ' a]);
+%                 n = str2num(a);
+%                 
+%                 while true
+%                     
+%                     fprintf('Please choose an action:\n');
+%                     
+%                     fprintf('\t[t] - Change type (''%s'')\n', config.sets(n).type);
+%                     fprintf('\t[i] - Change frames (%i elements)\n', numel(config.sets(n).frames));
+%                     fprintf('\t[z] - Change altitudes (%i elements)\n', numel(config.sets(n).z));
+%                     
+%                     fprintf('\t[Enter] - Return\n');
+%                     a = input('?> ', 's');
+%                     
+%                     switch a
+%                         
+%                         % Type
+%                         case 't'
+%                             line('');
+%                             config.sets(n).type = choose_type();
+%                             
+%                             % Frames
+%                         case 'i'
+%                             line('');
+%                             fprintf('Please enter the frame numbers:\n');
+%                             config.sets(n).frames = input('?> ');
+%                             
+%                             % Altitudes
+%                         case 'z'
+%                             line('')
+%                             fprintf('Please enter the altitudes (µm):\n');
+%                             config.sets(n).z = input('?> ');
+%                             
+%                         otherwise
+%                             break
+%                             
+%                     end
+%                     
+%                 end
+%                 
 %         end
-        firstIteration =1;
+%         firstIteration =1;
 %     end
-end
-
-fprintf('%s\n', ML.CW.line('End of configuration'));
-
-% --- Output
-out = 'Done';
-
+% end
+% 
+% fprintf('%s\n', ML.CW.line('End of configuration'));
+% 
+% % --- Output
+% out = 'Done';
+% 
 % % -------------------------------------------------------------------------
 % function out = choose_type()
 % 

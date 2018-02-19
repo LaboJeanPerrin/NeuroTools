@@ -24,27 +24,28 @@ classdef Focus<handle
     methods
         
         % _________________________________________________________________
-        function this = Focus(varargin)
+        function this = Focus(kwargs)
         %Focus::constructor
         
             % --- Inputs --------------------------------------------------
             
             in = inputParser;
-            in.addRequired('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
-            in.addOptional('study', '', @ischar);
-            in.addOptional('date', '', @ischar);
-            in.addOptional('run', '', @(x) ischar(x) || isnumeric(x));
-            in.addOptional('verbose', false, @islogical);
+            in.addParameter('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
+            in.addParameter('study', '', @ischar);
+            in.addParameter('date', '', @ischar);
+            in.addParameter('run', '', @(x) ischar(x) || isnumeric(x));
+            
+            in.parse(kwargs{:})
                     
             % --- Basic properties ----------------------------------------
             
-            this.study = in.study;
-            this.date = in.date;
+            this.study = in.Results.study;
+            this.date = in.Results.date;
             
-            if ischar(in.run)
-                this.run = in.run;
+            if ischar(in.Results.run)
+                this.run = in.Results.run;
             else
-                this.run = ['Run ' num2str(in.run, '%02i')];
+                this.run = ['Run ' num2str(in.Results.run, '%02i')];
             end
             this.name = [this.study ' - ' this.date ' (' this.run ')'];
             
@@ -55,7 +56,7 @@ classdef Focus<handle
             
             % --- Data dir
             
-            this.dir.data = [in.path 'Data' filesep this.study filesep this.date filesep this.run filesep];
+            this.dir.data = fullfile(in.Results.path, 'Data', this.study, this.date, this.run);
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
@@ -64,20 +65,20 @@ classdef Focus<handle
             
             % --- Other folders
             
-            this.dir.images = [this.dir.data 'Images' filesep];
-            this.dir.files = [this.dir.data 'Files' filesep];
-            this.dir.figures = [in.path 'Figures' filesep];
-            this.dir.movies = [in.path 'Movies' filesep];
+            this.dir.images = fullfile(this.dir.data, 'Images');
+            this.dir.files = fullfile(this.dir.data, 'Files');
+            this.dir.figures = fullfile(in.Results.path, 'Figures');
+            this.dir.movies = fullfile(in.Results.path, 'Movies');
 
             % --- Parameters ----------------------------------------------
             
-            paramPath = [this.dir.data 'Parameters.txt'];
+            paramPath = fullfile(this.dir.data, 'Parameters.txt');
                         
-            if ~exist(paramPath, 'dir')
-                error('No Parameter file found for study=%s, date=%s and run=%i.\n', F.study, F.date, F.run);
+            if ~exist(paramPath, 'file')
+                error('No Parameter file found at \n%s\n', paramPath);
             end
             
-            P = Parameters;
+            P = NT.Parameters;
             P.load(paramPath);
        
             % Set Parameters
@@ -176,7 +177,7 @@ classdef Focus<handle
             
             % --- Config file ---
             % if there is no config file, create it
-            Config(this)
+            Routines.Config(this)
         end
     end
     
