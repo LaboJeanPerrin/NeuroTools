@@ -78,7 +78,7 @@ classdef Parameters < handle
                 'KVU', struct());
             
             % Default KVU
-            KVU = struct();
+            this.KVU = struct();
             
         end
         

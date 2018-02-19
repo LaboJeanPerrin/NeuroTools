@@ -5,17 +5,23 @@ function out = Config(F)
 
 % rewrite function Hugo Trentesaux
 
-
-
 % === Parameters ==========================================================
 
 tag = 'Config';
 ext = 'tif';
 
-% === Default values ======================================================
+confPath = [F.dir.files filesep tag];
 
-dt = 20;            % 1/f Sampling (ms)
-exposure = 10;      % Exposure time (ms)
+% look for config file and continue only if ther isn't
+if exist(confPath, 'dir')
+    return
+end
+
+disp('No config file found, generating one');
+
+
+
+% === Default values ======================================================
 
 units = struct('dx', 'um', ...
     'dy', 'um', ...
@@ -24,16 +30,68 @@ units = struct('dx', 'um', ...
     't', 'ms', ...
     'exposure', 'ms');
 
-% =========================================================================
+% --- Initialize with default parameters
 
-Conf = F.matfile(tag);
+config = struct('dx', NaN, ...
+    'dy', NaN, ...
+    'dt', dt, ...
+    'exposure', exposure, ...
+    'units', units);
 
 % --- Prepare images list
-images = dir([F.Images '*.' ext]);
+    images = dir([F.Images '*.' ext]);
+
+
+% Get Image Processing parameters
+tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
+config.IP.prefix = tmp{1}{1};
+config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
+config.IP.extension = tmp{1}{3};
+
+tmp = imfinfo([F.Images images(1).name]);
+
+config.IP.date = tmp.FileModDate;
+config.IP.width = tmp.Width;
+config.IP.height = tmp.Height;
+config.IP.bitdepth = tmp.BitDepth;
+config.IP.class = ['uint' num2str(tmp.BitDepth)];
+if ~isfield(tmp,'Software'), tmp.Software = 'PCO_ExCv';end
+
+switch tmp.Software
+    case 'PCO_ExCv'
+        config.dx = 0.8;           % Voxel width (um)
+        config.dy = 0.8;           % Voxel height (um)
+        config.IP.camera = 'PCO.Edge';
+    case 'National Instruments IMAQ   '
+        config.dx = 0.66;           % Voxel width (um)
+        config.dy = 0.66;           % Voxel height (um)
+        config.IP.camera = 'Andor_iXon';
+    otherwise
+        config.IP.camera = 'default';
+end
+tmp = Image([F.Images images(round(numel(images)/2)).name]);
+config.IP.range = tmp.autorange;
+
+% Define sets
+config.sets = struct('id', {}, 'type', {}, 'frames', {}, 't', {}, 'z', {});
+                
+% Assign parameters to current config
+config.exposure = F.param.Exposure;
+config.dt = F.param.Delay; % TODO verify
+
+  % Get existing frames
+frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x,...
+    ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
+          
 
 
 
-% 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+
+        
+
+
 % % --- Preparation
 % line = @(x) fprintf('%s\n', ML.CW.line(x));
 % quit = false;
@@ -76,131 +134,70 @@ images = dir([F.Images '*.' ext]);
 %         
 %         % --- Prepare images list
 %         images = dir([F.Images '*.' ext]);
-        
-        % --- Prepare config structure
-        if ~exist('config', 'var')
-            if Conf.exist
-                
-                % Load config
-                config = Conf.load;
-                
-            else
-                
-                % Initialize with default parameters
-                config = struct('dx', NaN, ...
-                    'dy', NaN, ...
-                    'dt', dt, ...
-                    'exposure', exposure, ...
-                    'units', units);
-                
-                % Get Image Processing parameters
-                tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
-                config.IP.prefix = tmp{1}{1};
-                config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
-                config.IP.extension = tmp{1}{3};
-                
-                tmp = imfinfo([F.Images images(1).name]);
-                
-                config.IP.date = tmp.FileModDate;
-                config.IP.width = tmp.Width;
-                config.IP.height = tmp.Height;
-                config.IP.bitdepth = tmp.BitDepth;
-                config.IP.class = ['uint' num2str(tmp.BitDepth)];
-                if ~isfield(tmp,'Software'), tmp.Software = 'PCO_ExCv';end
-
-                switch tmp.Software
-                    case 'PCO_ExCv'
-                        config.dx = 0.8;           % Voxel width (um)
-                        config.dy = 0.8;           % Voxel height (um)
-                        config.IP.camera = 'PCO.Edge';
-                    case 'National Instruments IMAQ   '
-                        config.dx = 0.66;           % Voxel width (um)
-                        config.dy = 0.66;           % Voxel height (um)
-                        config.IP.camera = 'Andor_iXon';
-                    otherwise
-                        config.IP.camera = 'default';
-                end
-                tmp = Image([F.Images images(round(numel(images)/2)).name]);
-                config.IP.range = tmp.autorange;
-                
-                % Define sets
-                config.sets = struct('id', {}, 'type', {}, 'frames', {}, 't', {}, 'z', {});
-                
-                % Autoload from Parameters.txt file
-                fparam = [F.Data 'Parameters.txt'];
-                if exist(fparam, 'file')
-                    
-                    % Display
-                    fprintf('A ''Parameters.txt'' file has been found ...');
-                    
-                    % Parse parameters file
-                    tmp = ML.readtext(fparam);
-                    param = cell(numel(tmp),2);
-                    for i = 1:numel(tmp)
-                        
-                        tok = regexp(tmp{i}, '([^\t]*)\t(.*)', 'tokens');
-                        if isempty(tok), continue; end
-                        tok = tok{1};
-                        param{i,1} = tok{1};
-                        switch(tok{1})
-                            
-                            case 'Stimulation'
-                                jnk = textscan(tok{2}, '%f');
-                                param{i,2} = jnk{:}';
-                                
-                            otherwise
-                                jnk = textscan(tok{2}, '%f %s');
-                                param{i,2} = struct('value', jnk{1}, 'unit', '');
-                                if numel(jnk)==2
-                                    if ~isempty(jnk{2})
-                                        param{i,2}.unit = jnk{2}{:};
-                                    end
-                                end
-                        end
-                    end
-                    
-                    fprintf(' and loaded.\n');
-                    
-                    % Remove empty elements
-                    param(cellfun(@isempty, param(:,1)),:) = [];
-                    
-                    % Check consistency
-                    [tf, i] = ismember('Number of frames', param(:,1));
-                    if tf && numel(images)<param{i,2}.value
-                        ML.cprintf([1 0.5 0], ['\nWARNING: Inconsistent number of images: ' ...
-                            num2str(param{i,2}.value) ' expected, ' num2str(numel(images)) ' found.\n']);
-                    end
-                    
-                    % Assign values to current config
-                
-                    % Exposure
-                    [tf, i] = ismember('Exposure', param(:,1));
-                    if tf
-                        config.exposure = param{i,2}.value;
-                        if strcmp(param{i,2}.unit, 's')
-                            config.exposure = config.exposure*1000;
-                        end
-                    end
-                    
-                    
-                    % dt
-                    [tf, i] = ismember('Delay short', param(:,1));
-                    if tf
-                        tmp = param{i,2}.value;
-                        if strcmp(param{i,2}.unit, 's')
-                            tmp = tmp*1000;
-                        end
-                        config.dt = config.exposure + tmp;
-                    end
-                    
-                end
-                
-            end
-        end
-        
-        % Get existing frames
-        frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x, ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
-        
+%         
+%         % --- Prepare config structure
+%         if ~exist('config', 'var')
+%             if Conf.exist
+%                 
+%                 % Load config
+%                 config = Conf.load;
+%                 
+%             else
+% 
+%                 % Autoload from Parameters.txt file
+%                 fparam = [F.Data 'Parameters.txt'];
+%                 if exist(fparam, 'file')
+%                     
+%                     % Display
+%                     fprintf('A ''Parameters.txt'' file has been found ...');
+%                     
+%                     % Parse parameters file
+%                     tmp = ML.readtext(fparam);
+%                     param = cell(numel(tmp),2);
+%                     for i = 1:numel(tmp)
+%                         
+%                         tok = regexp(tmp{i}, '([^\t]*)\t(.*)', 'tokens');
+%                         if isempty(tok), continue; end
+%                         tok = tok{1};
+%                         param{i,1} = tok{1};
+%                         switch(tok{1})
+%                             
+%                             case 'Stimulation'
+%                                 jnk = textscan(tok{2}, '%f');
+%                                 param{i,2} = jnk{:}';
+%                                 
+%                             otherwise
+%                                 jnk = textscan(tok{2}, '%f %s');
+%                                 param{i,2} = struct('value', jnk{1}, 'unit', '');
+%                                 if numel(jnk)==2
+%                                     if ~isempty(jnk{2})
+%                                         param{i,2}.unit = jnk{2}{:};
+%                                     end
+%                                 end
+%                         end
+%                     end
+%                     
+%                     fprintf(' and loaded.\n');
+%                     
+%                     % Remove empty elements
+%                     param(cellfun(@isempty, param(:,1)),:) = [];
+%                     
+%                     % Check consistency
+%                     [tf, i] = ismember('Number of frames', param(:,1));
+%                     if tf && numel(images)<param{i,2}.value
+%                         ML.cprintf([1 0.5 0], ['\nWARNING: Inconsistent number of images: ' ...
+%                             num2str(param{i,2}.value) ' expected, ' num2str(numel(images)) ' found.\n']);
+%                     end
+%                     
+%                     
+%                     
+%                 end
+%                 
+%             end
+%         end
+%         
+%       
+%         
 %         % --- Select action
 %         
 %         fprintf('\nPlease choose an action:\n');

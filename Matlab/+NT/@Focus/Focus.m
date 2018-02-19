@@ -68,35 +68,18 @@ classdef Focus<handle
             this.dir.files = [this.dir.data 'Files' filesep];
             this.dir.figures = [in.path 'Figures' filesep];
             this.dir.movies = [in.path 'Movies' filesep];
-            
+
             % --- Parameters ----------------------------------------------
             
+            paramPath = [this.dir.data 'Parameters.txt'];
+                        
+            if ~exist(paramPath, 'dir')
+                error('No Parameter file found for study=%s, date=%s and run=%i.\n', F.study, F.date, F.run);
+            end
+            
             P = Parameters;
-            P.load([this.dir.data 'Parameters.txt']);
+            P.load(paramPath);
        
-% What is this ?
-%             kvufile = [this.dir.data 'KVU.txt'];
-%             if exist(kvufile, 'file')
-%                 P.load_KVU(kvufile);
-%             end
-                        
-            % --- Checks
-                        
-            % Study
-            if ~strcmp(this.study, P.Study)
-                error('Focus:Study', 'Studies do not match. This is a serious problem with the Parameters file.');
-            end
-            
-            % Date
-            if ~strcmp(this.date, P.Date)
-                error('Focus:Date', 'Dates do not match. This is a serious problem with the Parameters file.');
-            end
-            
-            % Run
-            if ~strcmp(this.run, P.RunName)
-                error('Focus:Run', 'Run names do not match. This is a serious problem with the Parameters file.');
-            end
-            
             % Set Parameters
             
             switch P.Version
@@ -134,16 +117,7 @@ classdef Focus<handle
                     this.param.CycleTime = P.CycleTime;
                     this.param.NFrames = P.NFrames;
                     this.param.RunTime = P.RunTime;
-                    
-%                     % --- KVU parameters
-%                     keys = fieldnames(P.KVU);
-%                     for i = 1:numel(keys)
-%                         this.param.(keys{i}) = P.KVU.(keys{i});
-%                         if isfield(P.Units.KVU, keys{i})
-%                             this.units.KVU.(keys{i}) = P.Units.KVU.(keys{i});
-%                         end
-%                     end
-                    
+                                   
                     % --- Signals
                     this.stim = P.Signals;
                                         
@@ -200,6 +174,9 @@ classdef Focus<handle
             % --- Default set
             this.select(1);
             
+            % --- Config file ---
+            % if there is no config file, create it
+            Config(this)
         end
     end
     
