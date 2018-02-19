@@ -218,5 +218,6 @@ classdef Focus<handle
     methods (Static)
       define(varargin)
       F = current()
+      F = getFocus(p_date, p_run)
    end
 end
