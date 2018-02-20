@@ -2,12 +2,12 @@ function DriftCompute(F, Layers_stack_ref, Layers, ind_Refstack)
 
 % --- Define reference image ---
 F.select(F.sets(Layers(1)).id);
-Img1 = F.iload(ind_Refstack);
+Img1 = F.imageLoad(ind_Refstack);
 tmp3D = zeros(Img1.height,Img1.width,size(Layers_stack_ref,2)); % preallocate tmp3D
 counter = 1;
 for i = Layers_stack_ref
     F.select(F.sets(i).id);
-    Ref = F.iload(ind_Refstack);
+    Ref = F.imageLoad(ind_Refstack);
     tmp3D(:,:,counter) = Ref.pix;
     counter = counter +1;
 end
@@ -27,7 +27,7 @@ for k = 1 : N_img_layer
     counter = 1;
     for i = Layers_stack_ref
         F.select(F.sets(i).id);
-        Img = F.iload(k);
+        Img = F.imageLoad(k);
         tmp3D(:,:,counter) = Img.pix;
         counter = counter +1;
     end
