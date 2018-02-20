@@ -8,7 +8,7 @@ function load(this, name, varargin)
 
 in = inputParser;
 in.addRequired('name', @ischar);
-in.addParamValue('class', 'double', @ischar);
+in.addParameter('class', 'double', @ischar);
 
 in.parse(name, varargin{:});
 in = in.Results;

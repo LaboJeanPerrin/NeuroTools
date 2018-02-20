@@ -1,4 +1,4 @@
-classdef Focus<handle
+classdef Focus < handle
 %Focus Class providing access to NeuroTool datasets
     
     % --- PROPERTIES ------------------------------------------------------
@@ -17,6 +17,8 @@ classdef Focus<handle
         
         sets
         set
+        
+        config % added config which contains all the config file (could remove sets aso)
         
     end
     
