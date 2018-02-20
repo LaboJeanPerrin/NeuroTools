@@ -1,4 +1,4 @@
-function out = iname(this, n, varargin)
+function out = imageName(this, n, varargin)
 %[Focus].iname Filename corresponding to an image.
 %   OUT = [Focus].INAME(N) returns the filename corresponding to the image
 %   number N.

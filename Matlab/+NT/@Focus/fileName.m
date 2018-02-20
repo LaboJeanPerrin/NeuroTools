@@ -1,4 +1,4 @@
-function out = FileName(this,varargin)
+function out = fileName(this,varargin)
 %[Focus].FileName filename corresponding to a tag
 %   OUT = FileName(TAG) returns the filename corresponding to the tag TAG. 
 %   TAG should be a string, optionnaly comprising file separators to define

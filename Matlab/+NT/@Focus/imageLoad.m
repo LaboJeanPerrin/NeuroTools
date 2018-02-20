@@ -1,4 +1,4 @@
-function Img = iload(this, n, varargin)
+function Img = imageLoad(this, n, varargin)
 %[Focus].iload Image load
 %   IMG = [Focus].ILOAD(N) Returns image number N.
 %

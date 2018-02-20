@@ -1,4 +1,4 @@
-function FileSave(this,varargin)
+function fileSave(this,varargin)
 %[Focus].FileSave Save data in a tagged-file.
 %   FileSave(TAG, KEY, VAL) saves the value VAL of the variable KEY in the 
 %   file tagged with TAG. The tagged file is located in the files directory
@@ -26,7 +26,7 @@ in = +in;
 % -------------------------------------------------------------------------
 
 % --- Get the file name
-fname = this.FileName(in.tag, 'ext', in.ext);
+fname = this.fileName(in.tag, 'ext', in.ext);
 
 % % --- Create the directory (if needed)
 % dir = fileparts(fname);
