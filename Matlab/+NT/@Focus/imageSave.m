@@ -1,4 +1,4 @@
-function isave(this, img, tag, varargin)
+function imageSave(this, img, tag, varargin)
 %FOCUS.ISAVE save an image in the Figures directory.
 %*  FOCUS.ISAVE(IMG, TAG) saves image IMG in the TAG file in the
 %   Figures directory.

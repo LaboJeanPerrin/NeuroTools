@@ -1,4 +1,4 @@
-function [out, desc] = FileLoad(this, varargin)
+function [out, desc] = fileLoad(this, varargin)
 %[Focus].FileLoad Load a tagged file from the focus files folder.
 %   OUT = FileLoad(TAG) loads the content of the file tagged with TAG. OUT
 %   is a struct.
@@ -27,7 +27,7 @@ if ischar(in.key)
 end
 
 % --- Get the file name
-fname = this.FileName(in.tag, 'ext', in.ext);
+fname = this.fileName(in.tag, 'ext', in.ext);
 
 % --- Load content
 M = ML.matfile(fname);

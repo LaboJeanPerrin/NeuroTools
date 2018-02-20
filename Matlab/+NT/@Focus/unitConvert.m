@@ -1,4 +1,4 @@
-function [v, u] = uconv(this, p, varargin)
+function [v, u] = unitConvert(this, p, varargin)
 %Focus.uconv Unit conversion 
 %   [V, U] = FOCUS.UCONV(PNAME) Converts the property PNAME in standard 
 %   units (seconds, meters). PNAME should be a string. V is the value in 

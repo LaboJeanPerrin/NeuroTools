@@ -1,4 +1,4 @@
-function out = define()
+function define()
 %[Focus].current Define the current focus object            [Static method]
 %   F = [Focus].define launchs a command-line interface to select the
 %   current Focus. At the end of the process the selected Focus is defined
