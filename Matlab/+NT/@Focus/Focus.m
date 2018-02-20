@@ -69,6 +69,13 @@ classdef Focus<handle
             this.dir.files = fullfile(this.dir.data, 'Files');
             this.dir.figures = fullfile(in.Results.path, 'Figures');
             this.dir.movies = fullfile(in.Results.path, 'Movies');
+            
+            % --- create folders if necessary (TODO all necessary folders)
+            
+            if ~exist(this.dir.files, 'dir')
+                disp('creating File directory')
+                mkdir(this.dir.files); % TODO handle error properly
+            end
 
             % --- Parameters ----------------------------------------------
             

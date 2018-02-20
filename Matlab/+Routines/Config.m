@@ -68,7 +68,8 @@ switch tmp.Software
     otherwise
         config.IP.camera = 'default';
 end
-tmp = Image([F.Images images(round(numel(images)/2)).name]); %% TODO F.dir.images ....
+
+tmp = NT.Image(fullfile(F.dir.images, images(round(numel(images)/2)).name));
 config.IP.range = tmp.autorange;
 
 % Define sets
@@ -109,9 +110,10 @@ end
 
 
 
-% --- Save configuration TODO à remettre en forme
+% --- Save configuration
+% TODO à remettre en forme
 
-save(confPath, conf)
+save(confPath, 'config')
 % Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
 % Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
 % Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
