@@ -17,10 +17,9 @@ confPath = fullfile(F.dir.files, tag);
 if exist(confPath, 'file')
     disp('config file found, loading it');
     load(confPath, 'config');
-    % save config to focus
-    F.config = config; %#ok<NODEF>
-    % save sets to focus TODO why ?
-    F.sets = config.sets;
+    % save config elements to focus
+    configTowardsFocus(config, F) %#ok<NODEF>
+    
     disp('Config.m loaded');
     return
 end
@@ -121,13 +120,15 @@ end
 % --- Save configuration
 % TODO à remettre en forme
 
-
-% save config to focus
-F.config = config;
-% save sets to focus TODO why ?
-F.sets = config.sets;
+% save config elements to focus
+configTowardsFocus(config, F)
 
 save(confPath, 'config')
+
+disp('config file saved')
+
+end
+
 % Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
 % Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
 % Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
@@ -136,6 +137,14 @@ save(confPath, 'config')
 % Conf.save('IP', config.IP, 'Image processing parameters');
 % Conf.save('units', config.units, 'Summary of the units used in this configuration file');
 
-disp('config file saved')
+function configTowardsFocus(config, F)
 
+    % save config elements to focus
+    F.units = config.units;
+    F.sets = config.sets;
+    F.IP = config.IP;
+%         dx
+%         dy
+%         dt
+%         exposure
 end

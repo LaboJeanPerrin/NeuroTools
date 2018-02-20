@@ -1,5 +1,7 @@
 function DriftCompute(F, Layers_stack_ref, Layers, ind_Refstack)
 
+N_img_layer = length(F.set.frames); % Number of brain scans to correct
+
 % --- Define reference image ---
 F.select(F.sets(Layers(1)).id);
 Img1 = F.imageLoad(ind_Refstack);
@@ -12,8 +14,8 @@ for i = Layers_stack_ref
     counter = counter +1;
 end
 Ref.pix = max(tmp3D(:,:,:),[],3);
-figure;imshow(rescalegd2(Ref.pix));
-title([F.name])
+% figure;imshow(rescalegd(Ref.pix));
+% title([F.name])
 
 bbox = [45   914    53   566];
 Ref.region(bbox);
@@ -50,12 +52,20 @@ clear tmp3D
 % --- Save ---
 for i = Layers
     % --- Save bbox ---
-    Dmat = F.matfile(['IP/', num2str(i) ,'/DriftBox']);
-    Dmat.save(bbox, 'Bounding box for drift correction ([x1 x2 y1 y2])');
-    % --- Save Drift.mat ---
-    dmat = F.matfile(['IP/', num2str(i) ,'/Drifts']);
-    dmat.save(dx, 'Drift in the x-direction, at each time step [pix]');
-    dmat.save(dy, 'Drift in the y-direction, at each time step [pix]');
+%     % removed matfile
+%     % TODO use saveFile (once it's independant from MLAB) % % % % % % % %
+%     Dmat = F.matfile(['IP/', num2str(i) ,'/DriftBox']);
+%     Dmat.save(bbox, 'Bounding box for drift correction ([x1 x2 y1 y2])');
+%     % --- Save Drift.mat ---
+%     dmat = F.matfile(['IP/', num2str(i) ,'/Drifts']);
+%     dmat.save(dx, 'Drift in the x-direction, at each time step [pix]');
+%     dmat.save(dy, 'Drift in the y-direction, at each time step [pix]');
+      dBoxPath = fullfile(F.dir.IP, num2str(i));
+      mkdir(dBoxPath);
+      save(fullfile(dBoxPath, 'DriftBox'), 'bbox'); % TODO à refaire avec savefile
+      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy'); % TODO à refaire avec savefile
 end
 
+savefig(fullfile(F.dir.IP, 'driftCorrection')); 
+close gcf
 end

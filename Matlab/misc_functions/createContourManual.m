@@ -8,8 +8,8 @@ for layer = Layers
     try % try to load existing contour
         load(fullfile(F.dir.files, 'signal_stacks', num2str(layer), 'contour.mat'));
     catch % otherwise, create it
-        Limg = @(n) double(imread(fullfile(F.dir.images, [F.config.IP.prefix num2str(n, F.config.IP.format) '.tif'])));
-        Img1 = Limg(size(F.config.sets,2)*(ind_Refstack-1)+(layer-1));
+        Limg = @(n) double(imread(fullfile(F.dir.images, [F.IP.prefix num2str(n, F.IP.format) '.tif'])));
+        Img1 = Limg(size(F.sets,2)*(ind_Refstack-1)+(layer-1));
         
 %             % Load first image of the set \\ automatic zone
 %     Img = F.iload(10);
@@ -38,4 +38,12 @@ for layer = Layers
         save(fullfile(F.dir.files, 'signal_stacks', num2str(layer), 'contour.mat'), 'w');
     end
     W{layer-(Layers(1)-1)} = w;
+    
+end
+
+
+close gcf
+disp('all ROI have been defined')
+    
+    
 end

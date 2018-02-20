@@ -7,9 +7,9 @@ function [dx, dy] = fcorr(this, Img, varargin)
 
 % === Input variables =====================================================
 
-in = ML.Input;
-in.addParamValue('method', 'parabolic', @ischar);
-in = +in;
+in = inputParser;
+in.addParameter('method', 'parabolic', @ischar);
+in.parse();
 
 % =========================================================================
 
@@ -26,7 +26,7 @@ res = ifftshift(ifft2(FFT));
 [~, I] = max(res(:));
 [x0, y0] = ind2sub(size(res), I);
 
-switch in.method
+switch in.Results.method
     
     case 'rough'
         % --- Rough maximum estimation

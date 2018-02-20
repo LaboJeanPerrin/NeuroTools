@@ -17,9 +17,13 @@ classdef Focus < handle
         
         sets
         set
+        IP       
         
-        config % added config which contains all the config file (could remove sets aso)
-        
+% This part is not implemented
+%         dx
+%         dy
+%         dt
+%         exposure
     end
     
     % --- METHODS ---------------------------------------------------------
@@ -56,9 +60,11 @@ classdef Focus < handle
             % Preparation
             this.dir = struct();
             
+            this.dir.root = in.Results.path;
+            
             % --- Data dir
             
-            this.dir.data = fullfile(in.Results.path, 'Data', this.study, this.date, this.run);
+            this.dir.data = fullfile(this.dir.root, 'Data', this.study, this.date, this.run);
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
@@ -69,6 +75,7 @@ classdef Focus < handle
             
             this.dir.images = fullfile(this.dir.data, 'Images');
             this.dir.files = fullfile(this.dir.data, 'Files');
+            this.dir.IP = fullfile(this.dir.files, 'IP');
             this.dir.figures = fullfile(in.Results.path, 'Figures');
             this.dir.movies = fullfile(in.Results.path, 'Movies');
             
@@ -77,6 +84,7 @@ classdef Focus < handle
             if ~exist(this.dir.files, 'dir')
                 disp('creating File directory')
                 mkdir(this.dir.files); % TODO handle error properly
+                mkdir(this.dir.IP); % TODO handle error properly
             end
 
             % --- Parameters ----------------------------------------------
