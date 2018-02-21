@@ -30,18 +30,18 @@ classdef Focus < handle
     methods
         
         % _________________________________________________________________
-        function this = Focus(kwargs)
+        function this = Focus(args)
         %Focus::constructor
         
             % --- Inputs --------------------------------------------------
             
             in = inputParser;
-            in.addParameter('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
-            in.addParameter('study', '', @ischar);
-            in.addParameter('date', '', @ischar);
-            in.addParameter('run', '', @(x) ischar(x) || isnumeric(x));
+            in.addRequired('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
+            in.addRequired('study', @ischar);
+            in.addRequired('date', @ischar);
+            in.addRequired('run', @(x) ischar(x) || isnumeric(x));
             
-            in.parse(kwargs{:})
+            in.parse(args{:})
                     
             % --- Basic properties ----------------------------------------
             

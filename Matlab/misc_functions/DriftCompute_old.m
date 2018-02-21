@@ -53,7 +53,7 @@ clear tmp3D
 for i = Layers
     % --- Save bbox ---
 %     % removed matfile
-%     % TODO use saveFile (once it's independant from MLAB) % % % % % % % %
+%     % TODO use saveFile ? (once it's independant from MLAB) % % % % % % %
 %     Dmat = F.matfile(['IP/', num2str(i) ,'/DriftBox']);
 %     Dmat.save(bbox, 'Bounding box for drift correction ([x1 x2 y1 y2])');
 %     % --- Save Drift.mat ---
@@ -62,8 +62,8 @@ for i = Layers
 %     dmat.save(dy, 'Drift in the y-direction, at each time step [pix]');
       dBoxPath = fullfile(F.dir.IP, num2str(i));
       mkdir(dBoxPath);
-      save(fullfile(dBoxPath, 'DriftBox'), 'bbox'); % TODO à refaire avec savefile
-      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy'); % TODO à refaire avec savefile
+      save(fullfile(dBoxPath, 'DriftBox'), 'bbox'); % TODO à refaire avec savefile ?
+      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy'); % TODO à refaire avec savefile ?
 end
 
 savefig(fullfile(F.dir.IP, 'driftCorrection')); 
