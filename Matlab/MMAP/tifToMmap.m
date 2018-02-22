@@ -30,6 +30,8 @@ T = p.Results.t;
 outputMmap = fullfile(F.dir.files, [tag '.mmap']);
 outputMmapInfo = fullfile(F.dir.files, [tag '.mmap.mat']);
 
+w = waitbar(0, 'Converting TIF to mmap');
+
 % write the binary file
 fid = fopen(outputMmap, 'wb');
 for t = T % along t
@@ -38,9 +40,12 @@ for t = T % along t
         tmp = F.imageLoad(t);
 %         tmp = tmp.crop(X,Y); % crop image TODO could be done with region ?
         fwrite(fid,tmp.pix,'uint16');
+        waitbar(t/T(end))
     end
 end
 fclose(fid);
+
+close(w)
 
 % get the dimension of the 4D matrix
 x = length(X); % width

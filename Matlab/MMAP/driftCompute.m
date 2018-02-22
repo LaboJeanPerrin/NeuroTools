@@ -43,12 +43,17 @@ title([F.name '   dx=red, dy=blue']);
 
 dx = zeros(1,N);
 dy = zeros(1,N);
+
+w = waitbar(0, 'Computing drift');
+
 for t = m.T % run across the times
     % compute the image to compare with the ref image
     Img = NT.Image(max(m(X,Y,RefLayers, t),[],3));
     
     % compute the DX and DY with the fourier transform
     [dy(t), dx(t)] = Ref.fcorr(Img);
+    
+    waitbar(t/m.T(end)) 
 
     % plot 1/50 images
     if ~mod(t,50)
@@ -57,6 +62,8 @@ for t = m.T % run across the times
         pause(0.1) % why ?
     end   
 end
+
+close(w)
 
 % --- Save ---
 % save bbox and drifts

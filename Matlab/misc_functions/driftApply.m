@@ -13,6 +13,8 @@ load(rawMatPath, 'X', 'Y', 'Z', 'T');
 outputMmap = fullfile(F.dir.files, 'corrected.mmap');
 outputMmapInfo = fullfile(F.dir.files, 'corrected.mmap.mat');
 
+w = waitbar(0, 'Applying computed drift');
+
 % write the binary file
 fid = fopen(outputMmap, 'wb');
 for t = T % along t
@@ -22,8 +24,11 @@ for t = T % along t
             [-dx(t), -dy(t)]),...
             'uint16');
     end
+    waitbar(t/T(end)) %#ok<COLND>
 end
 fclose(fid);
+
+close(w)
 
 % get the dimension of the 4D matrix
 x = length(X); % width
