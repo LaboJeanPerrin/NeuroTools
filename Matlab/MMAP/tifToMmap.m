@@ -7,8 +7,8 @@ function tifToMmap(F, tag, kwargs)
 %       t frames of interest TODO
 
 % default values
-X = 1:F.IP.height;          % x size
-Y = 1:F.IP.width;           % y size
+X = 1:F.IP.width;           % x size
+Y = 1:F.IP.height;          % y size
 Z = [F.sets.id];            % id of all layers (ex 1:20)
 T = 1:length(F.set.frames); % number of image per layer (ex 1:3000)
 
@@ -36,7 +36,7 @@ for t = T % along t
     for z = Z % along z
         F.select(F.sets(z).id);
         tmp = F.imageLoad(t);
-%         tmp = tmp.crop(X,Y); % crop image TODO
+%         tmp = tmp.crop(X,Y); % crop image TODO could be done with region ?
         fwrite(fid,tmp.pix,'uint16');
     end
 end
@@ -48,7 +48,7 @@ y = length(Y); % heigth
 z = length(Z); % number of layers of interest
 t = length(T); % number of frames par layer
 
-% map the binary file
+% map of the binary file
 mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'}); %#ok<NASGU>
 % save it to a matlab file
 save(outputMmapInfo, 'mmap', 'X', 'Y', 'Z', 'T');

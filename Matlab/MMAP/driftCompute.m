@@ -1,9 +1,18 @@
-function driftCompute(F, mmap, kwargs)
-%driftCompute computes the drift on the given layer against the given reference stack
+function driftCompute(F, m, kwargs)
+%driftCompute computes the drift on the given layer against the given reference stack max projection
 % using the parabolic fft based drift correction
+% F is the focus
+% m is the Mmap object
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+%  Attention : driftCompute contient plusieurs choix
+%  - utilisation du max des layers selectionnés
+%  - bbox définie dans le programme
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
 
 % parameters
-N_img_layer = length(F.set.frames); % Number of frames per layer
+N = length(m.T); % Number of frames per layer
 
 % parse input to change reference stack TODO write validation function
 in = inputParser;
@@ -12,72 +21,53 @@ in.addParameter('layersOfReferenceStack', 4:6);
 in.addParameter('Layers', [F.sets.id]);
 in.parse(kwargs{:})
 
-% --- Define reference image ---
-F.select(F.sets(Layers(1)).id);
-Img1 = F.imageLoad(ind_Refstack);
-tmp3D = zeros(Img1.height,Img1.width,size(Layers_stack_ref,2)); % preallocate tmp3D
-counter = 1;
-for i = Layers_stack_ref
-    F.select(F.sets(i).id);
-    Ref = F.imageLoad(ind_Refstack);
-    tmp3D(:,:,counter) = Ref.pix;
-    counter = counter +1;
-end
-Ref.pix = max(tmp3D(:,:,:),[],3);
-% figure;imshow(rescalegd(Ref.pix));
-% title([F.name])
+Layers = in.Results.Layers;
+indexOfReferenceStack = in.Results.indexOfReferenceStack;
+layersOfReferenceStack = in.Results.layersOfReferenceStack;
 
-bbox = [45   914    53   566];
-Ref.region(bbox);
+% --- Define reference image ---
+% the reference image we take is the maximum of the selected layers along
+% the 3rd dimension
+
+bbox = [ 53 566 45 914 ]; % define bounding box to look into
+X = bbox(1):bbox(2);
+Y = bbox(3):bbox(4);
+
+% compute reference image
+Ref = NT.Image(max(m(X,Y,layersOfReferenceStack, indexOfReferenceStack),[],3));
 
 % --- Drift correction ---
-tmp3D(:) = 0;
-dx = zeros(1,N_img_layer);
-dy = zeros(1,N_img_layer);
-for k = 1 : N_img_layer
-    % Calculate z-projection of stack at first time point
-    counter = 1;
-    for i = Layers_stack_ref
-        F.select(F.sets(i).id);
-        Img = F.imageLoad(k);
-        tmp3D(:,:,counter) = Img.pix;
-        counter = counter +1;
-    end
-    Img.pix = max(tmp3D(:,:,:),[],3);
+% creates a figure to plot the drift correction
+figure; hold on;
+title([F.name '   dx=red, dy=blue']);
 
-    Img.region(bbox);
+dx = zeros(1,N);
+dy = zeros(1,N);
+for t = m.T % run across the times
+    % compute the image to compare with the ref image
+    Img = NT.Image(max(m(X,Y,layersOfReferenceStack, t),[],3));
+    
+    % compute the DX and DY with the fourier transform
+    [dx(t), dy(t)] = Ref.fcorr(Img);
 
-    [DX, DY] = Ref.fcorr(Img);
-    Img.translate(-DY, -DX);
-    dx(k) = DX;
-    dy(k) = DY;
-
-    if ~mod(k,50)
-        plot(k-49:k,dy(k-49:k),'b*');hold on;plot(k-49:k,dx(k-49:k),'*r');
-        title([F.name]);
-        pause(0.1)
+    % plot 1/50 images
+    if ~mod(t,50)
+        plot(t-49:t,dy(t-49:t),'b.');
+        plot(t-49:t,dx(t-49:t),'r.');
+        pause(0.1) % why ?
     end   
 end
-clear tmp3D
+
 % --- Save ---
 for i = Layers
-    % --- Save bbox ---
-%     % removed matfile
-%     % TODO use saveFile ? (once it's independant from MLAB) % % % % % % %
-%     Dmat = F.matfile(['IP/', num2str(i) ,'/DriftBox']);
-%     Dmat.save(bbox, 'Bounding box for drift correction ([x1 x2 y1 y2])');
-%     % --- Save Drift.mat ---
-%     dmat = F.matfile(['IP/', num2str(i) ,'/Drifts']);
-%     dmat.save(dx, 'Drift in the x-direction, at each time step [pix]');
-%     dmat.save(dy, 'Drift in the y-direction, at each time step [pix]');
-      dBoxPath = fullfile(F.dir.IP, num2str(i));
+      dBoxPath = fullfile(F.dir.IP, num2str(i)); % path of drift box file
       mkdir(dBoxPath);
-      save(fullfile(dBoxPath, 'DriftBox'), 'bbox'); % TODO à refaire avec savefile ?
-      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy'); % TODO à refaire avec savefile ?
+      save(fullfile(dBoxPath, 'DriftBox'), 'bbox');
+      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy');
 end
 
 savefig(fullfile(F.dir.IP, 'driftCorrection')); 
 close gcf
-end
 
 end
+
