@@ -59,17 +59,12 @@ for t = m.T % run across the times
 end
 
 % --- Save ---
+% save bbox and drifts
+mkdir(F.dir.IP);
+save(fullfile(F.dir.IP, 'DriftBox'), 'bbox');
+save(fullfile(F.dir.IP, 'Drifts'), 'dx', 'dy');
+savefig(fullfile(F.dir.IP, 'driftCorrection'));
 
-
-% save in one folder per layer
-for i = Layers
-      dBoxPath = fullfile(F.dir.IP, num2str(i)); % path of drift box file
-      mkdir(dBoxPath);
-      save(fullfile(dBoxPath, 'DriftBox'), 'bbox');
-      save(fullfile(dBoxPath, 'Drifts'), 'dx', 'dy');
-end
-
-savefig(fullfile(F.dir.IP, 'driftCorrection')); 
 close gcf
 
 end
