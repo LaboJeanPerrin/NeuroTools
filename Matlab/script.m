@@ -10,7 +10,7 @@ rename(param.date,param.run_number);
 % view image using the active mmap 'm'
 z = 4;
 t = 1;
-imshow(egalize_histogram(F,m(:,:,z,t)))
+imshow(m(:,:,z,t),[300 1500])
 %% stack viewer
 % generate a figure with gui to navigate in the current hyperstack
 stackViewer(F,m)
@@ -61,9 +61,13 @@ tic; driftCompute(F,m,{...
 seeDriftCorrection(F);
 %% applies drift if it is ok
 % applies drift correction and records mmap
-driftApply(F, m);
-
-
+tic; driftApply(F, m); toc
+%% retrieve Mmap object
+% reads the mmap object from the file
+m = Mmap(F, 'corrected');
+%% stack viewer
+% view corrected hyperstack
+stackViewer(F,m)
 
 
 

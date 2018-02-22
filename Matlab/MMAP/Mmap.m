@@ -24,7 +24,7 @@ classdef Mmap < handle
         
         function out = subsref(self, S)
         %subsref calls the mmap with the correct z index
-            switch S.type
+            switch S(1).type
                 case '()'
                     old_z = S.subs{3}; % values asked ex [4 5 6]
                     new_z = NaN(size(old_z));

@@ -7,7 +7,7 @@ load(driftPath, 'dx', 'dy')
     
 % load mmap info
 rawMatPath = fullfile(F.dir.files, [m.tag '.mmap.mat']);
-load(rawMatPath, 'mmap', 'X', 'Y', 'Z', 'T');
+load(rawMatPath, 'X', 'Y', 'Z', 'T');
 
 % define output files
 outputMmap = fullfile(F.dir.files, 'corrected.mmap');
@@ -25,7 +25,14 @@ for t = T % along t
 end
 fclose(fid);
 
-% the mmap did not change (keep the same mmap)
+% get the dimension of the 4D matrix
+x = length(X); % width
+y = length(Y); % heigth
+z = length(Z); % number of layers of interest
+t = length(T); % number of frames par layer
+
+% save the mmap with the correct filename
+mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'}); %#ok<NASGU>
 save(outputMmapInfo, 'mmap', 'X', 'Y', 'Z', 'T');
 
 % TODO rm raw binary file
