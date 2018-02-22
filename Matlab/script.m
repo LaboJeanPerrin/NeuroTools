@@ -10,7 +10,7 @@ rename(param.date,param.run_number);
 % view image using the active mmap 'm'
 z = 4;
 t = 1;
-imshow(m(:,:,z,t),[300 1500])
+imshow(m(:,:,z,t),[300 1000])
 %% stack viewer
 % generate a figure with gui to navigate in the current hyperstack
 stackViewer(F,m)
@@ -38,7 +38,8 @@ F = NT.Focus({param.cwd, '', param.date, param.run_number});
 % for the given z and t
 % Layer to map
 param.Layers = 3:10; 
-tic; tifToMmap(F, 'raw2', {'z', param.Layers, 't', 1:1000}); toc
+param.T = length(F.set.t); 
+tic; tifToMmap(F, 'raw', {'z', param.Layers, 't', param.T}); toc
 
 %% retrieve Mmap object
 % reads the mmap object from the file

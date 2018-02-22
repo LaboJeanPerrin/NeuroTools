@@ -21,7 +21,7 @@ in.addParameter('RefLayers', 4:6);     % by default stacks 4, 5, 6
 in.addParameter('Layers', [F.sets.id]);             % by default all
 in.parse(kwargs{:})
 
-Layers = in.Results.Layers;
+% Layers = in.Results.Layers;
 RefIndex = in.Results.RefIndex;
 RefLayers = in.Results.RefLayers;
 
@@ -41,6 +41,7 @@ Ref = NT.Image(max(m(X,Y,RefLayers, RefIndex),[],3));
 figure; hold on;
 title([F.name '   dx=red, dy=blue']);
 
+% init drift vectors
 dx = zeros(1,N);
 dy = zeros(1,N);
 
