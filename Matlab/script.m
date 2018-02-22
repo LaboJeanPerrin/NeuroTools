@@ -8,7 +8,7 @@
 rename(param.date,param.run_number);
 %% view
 % view image using the active mmap 'm'
-z = 4;
+z = 3;
 t = 1;
 imshow(m(:,:,z,t),[300 1000])
 %% stack viewer

@@ -25,6 +25,17 @@ fclose(fid);
 
 close(w)
 
+% load inputmap variables
+load(inputMmap)
+
+% get the dimension of the 4D matrix
+x = length(X); % width
+y = length(Y); % heigth
+z = length(Z); % number of layers of interest
+t = length(T); % number of frames par layer
+
 % save the mmap with the correct filename
 mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'}); 
 save(outputMmapinfo, 'mmap', 'X', 'Y', 'Z', 'T');
+
+clearvars -except F m param

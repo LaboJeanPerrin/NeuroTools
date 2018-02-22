@@ -3,8 +3,8 @@ function stackViewer(F, m)
 % 
 % à faire proprement, mais l'idée est là
 % 
-% 
-% 
+
+
 
 Z = m.Z;
 T = m.T;
