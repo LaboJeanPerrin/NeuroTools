@@ -33,7 +33,7 @@ classdef Alp < handle
                 
                 fprintf('Loading the library ...'); tic
                 loadlibrary(dllFile, headerFile);                
-                fprintf(' %0.2f sec - ', toc);
+                fprintf(' %0.2f sec\t\t', toc);
             
                 this.dispResult(~libisloaded(this.dll));
                 
@@ -48,7 +48,7 @@ classdef Alp < handle
             
             % Get the DMD device
             [res, this.device] = calllib(this.dll, 'AlpDevAlloc', int32(0), int32(0), hdeviceptr);
-            fprintf(' %0.2f sec - ', toc);
+            fprintf(' %0.2f sec\t\t', toc);
             this.dispResult(res);
                         
         end
@@ -59,7 +59,7 @@ classdef Alp < handle
             % Free the device
             fprintf('Freeing the device ...'); tic
             res = calllib(this.dll, 'AlpDevFree', this.device);
-            fprintf(' %0.2f sec - ', toc);
+            fprintf(' %0.2f sec\t\t\t', toc);
             this.dispResult(res);
             
         end
@@ -67,8 +67,8 @@ classdef Alp < handle
         % === Result display ==============================================
         function dispResult(~, res)
             switch res
-                case 0, fprintf('Success\n');
-                otherwise, fprintf('Failure (%i)\n', res);
+                case 0, fprintf('[\bOK]\b\n');
+                otherwise, fprintf(2, '<strong>Failure (%i)</strong>\n', res);
             end
         end
     end
