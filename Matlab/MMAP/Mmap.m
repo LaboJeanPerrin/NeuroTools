@@ -27,7 +27,11 @@ classdef Mmap < handle
                     old_z = S.subs{3}; % values asked ex [4 5 6]
                     new_z = NaN(size(old_z));
                     for i = 1:length(old_z)
-                        new_z(i) = find(self.Z == old_z(i));
+                        try
+                            new_z(i) = find(self.Z == old_z(i));
+                        catch
+                            error('INDEX OUT OF RANGE : trying to reach layers outside mmap')
+                        end
                     end
                     new_S = S;
                     new_S.subs{3} = new_z;
