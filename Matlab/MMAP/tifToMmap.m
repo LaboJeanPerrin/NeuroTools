@@ -1,10 +1,10 @@
-function mmap = tifToMmap(F, kwargs)
+function tifToMmap(F, tag, kwargs)
 %rawToMmap takes the tif images and write it in a 4D mmap file
 % F is the focus on the run
 % kwargs are key-word arguments to specify
-%       x,y ROI (rectangle)
+%       x,y ROI (rectangle) TODO
 %       z layers
-%       t frames of interest
+%       t frames of interest TODO
 
 % default values
 X = 1:F.IP.height;          % x size
@@ -12,12 +12,12 @@ Y = 1:F.IP.width;           % y size
 Z = [F.sets.id];            % id of all layers (ex 1:20)
 T = 1:length(F.set.frames); % number of image per layer (ex 1:3000)
 
-% parse input
+% parse input TODO write validation functions
 p = inputParser;
-p.addParameter('x', X); % TODO write validation function
-p.addParameter('y', Y); % TODO write validation function
-p.addParameter('z', Z); % TODO write validation function
-p.addParameter('t', T); % TODO write validation function
+p.addParameter('x', X);
+p.addParameter('y', Y);
+p.addParameter('z', Z);
+p.addParameter('t', T);
 p.parse(kwargs{:})
 
 % replace default values by given ones
@@ -27,8 +27,8 @@ Z = p.Results.z;
 T = p.Results.t;
  
 % define output files
-outputMmap = fullfile(F.dir.files, 'raw.mmap');
-outputMmapInfo = fullfile(F.dir.files, 'raw.mmap.mat');
+outputMmap = fullfile(F.dir.files, [tag '.mmap']);
+outputMmapInfo = fullfile(F.dir.files, [tag '.mmap.mat']);
 
 % write the binary file
 fid = fopen(outputMmap, 'wb');
@@ -37,7 +37,7 @@ for t = T % along t
         F.select(F.sets(z).id);
         tmp = F.imageLoad(t);
 %         tmp = tmp.crop(X,Y); % crop image TODO
-        fwrite(fid,tmp.pix,'double');
+        fwrite(fid,tmp.pix,'uint16');
     end
 end
 fclose(fid);
@@ -48,8 +48,8 @@ y = length(Y); % heigth
 z = length(Z); % number of layers of interest
 t = length(T); % number of frames par layer
 
-% return the map of the binary file
-mmap = memmapfile(outputMmap,'Format',{'double',[x,y,z,t],'raw'});
+% map the binary file
+mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'}); %#ok<NASGU>
 % save it to a matlab file
 save(outputMmapInfo, 'mmap', 'X', 'Y', 'Z', 'T');
 

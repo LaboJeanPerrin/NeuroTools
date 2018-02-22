@@ -1,4 +1,4 @@
-function stackViewer(F, mmap)
+function stackViewer(F, m)
 % 
 % 
 % à faire proprement, mais l'idée est là
@@ -6,48 +6,47 @@ function stackViewer(F, mmap)
 % 
 % 
 
-zmax = mmap.Format{2}(3);
-tmax = mmap.Format{2}(4);
+Z = m.Z;
+T = m.T;
 
 f = figure('Visible','off'); 
 
-z=1;
-t=1;
+z=Z(1);
+t=T(1);
 
-img = mmap.Data.raw(:,:,z,t);
-img = img - F.IP.range(1);
-img = img / (F.IP.range(2) - F.IP.range(1)) * 20;
+img = egalize_histogram(F,m(:,:,z,t));
 
 h = imshow(img);
 title(['z=' num2str(z) '   t=' num2str(t)]);
 
-
+% z slider
 uicontrol('Style', 'slider',...
-    'Min',1,'Max',zmax,'Value',z,...
-    'Position', [100 10 600 20],...
+    'Min',Z(1),'Max',Z(end),'Value',z,...
+    'Position', [1160 300 20 200],...
     'Callback', @actualize_z);
 
+% t slider
 uicontrol('Style', 'slider',...
-    'Min',1,'Max',tmax,'Value',t,...
-    'Position', [100 40 600 20],...
+    'Min',T(1),'Max',T(end),'Value',t,...
+    'Position', [20 40 1100 20],...
     'Callback', @actualize_t);
     
-    
 f.Visible = 'on';
+set(f, 'Position',[200 200 1280 900]);
     
     function actualize_z(source, ~)
         z = floor(source.Value);
-        img = egalize_histogram(F,mmap.Data.raw(:,:,z,t));
+        img = egalize_histogram(F,m(:,:,z,t));
         set(h, 'Cdata', img);
-        drawnow;
         title(['z=' num2str(z) '   t=' num2str(t)]);
+        drawnow;
     end
 
-function actualize_t(source, ~)
+    function actualize_t(source, ~)
         t = floor(source.Value);
-        img = egalize_histogram(F,mmap.Data.raw(:,:,z,t));
+        img = egalize_histogram(F,m(:,:,z,t));
         set(h, 'Cdata', img);
-        drawnow;
         title(['z=' num2str(z) '   t=' num2str(t)]);
+        drawnow;
     end
 end
