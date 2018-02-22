@@ -1,5 +1,5 @@
 function seeDriftCorrection(F)
-    driftPath = fullfile(F.dir.IP, '3', 'Drifts.mat');
+    driftPath = fullfile(F.dir.IP, 'Drifts.mat');
     load(driftPath, 'dx', 'dy')
     
     m = Mmap(F, 'raw');

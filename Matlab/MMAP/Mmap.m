@@ -2,6 +2,7 @@ classdef Mmap < handle
 % the class Mmap is used to load a mmap by its tag (ex raw) and redefine
 % layers index when called as subscript
     properties
+        tag
         mmap
         width
         height
@@ -10,14 +11,15 @@ classdef Mmap < handle
     end
     methods
         function self = Mmap(F, tag)
-        %Mmap constructor takes a tag to know which mmap
-        mmapPath = fullfile(F.dir.files, [tag '.mmap.mat']);
-        load(mmapPath, 'mmap', 'X', 'Y', 'Z', 'T');
-        self.mmap = mmap;
-        self.width = X(end); %#ok<COLND>
-        self.height = Y(end); %#ok<COLND>
-        self.Z = Z;
-        self.T = T;
+        %Mmap constructor takes a tag to know which mmap to load
+            self.tag = tag;
+            mmapPath = fullfile(F.dir.files, [tag '.mmap.mat']);
+            load(mmapPath, 'mmap', 'X', 'Y', 'Z', 'T');
+            self.mmap = mmap;
+            self.width = X(end); %#ok<COLND>
+            self.height = Y(end); %#ok<COLND>
+            self.Z = Z;
+            self.T = T;
         end
         
         function out = subsref(self, S)

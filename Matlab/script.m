@@ -59,6 +59,9 @@ tic; driftCompute(F,m,{...
 %% see if drift is well corrected
 % applies imtranslate with computed values in a loop
 seeDriftCorrection(F);
+%% applies drift if it is ok
+% applies drift correction and records mmap
+driftApply(F, m);
 
 
 
