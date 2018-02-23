@@ -76,8 +76,13 @@ tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
 autoROI(F, F)
+
+
+
+
+
 %% compute baseline
-% naive
+% naive approach is too long (170 000 x 1500 = 255 000 000)
 tic; naiveBaselineLayer(F, m, 3); toc
 
 
