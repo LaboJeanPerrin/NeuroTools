@@ -29,6 +29,8 @@ driftApply(F);
 %% view corrected hyperstack
 stackViewer(F, 'corrected')
 
+% m=Mmap(F, 'corrected'); imshow(m(:,:,3,10)',[300 800]);
+
 %% define focus on reference stack and take its ROI if existing
 %{
 param.run_number = 6;
@@ -52,8 +54,10 @@ createSignalStacks(F, param.Layers);
                     '/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.h');
 %% compute baseline on signal stack using caTools library
 caToolsRunquantile(F, param.Layers);
-
-
+%% compute background
+background = 400;
+%% compute DFF
+dff(F, background);
 
 
 
