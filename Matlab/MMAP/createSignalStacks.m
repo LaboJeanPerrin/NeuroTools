@@ -6,7 +6,7 @@ function createSignalStacks(F, m)
     outputPath = fullfile(F.dir.IP, 'signalStacks');
     mkdir(outputPath);
 
-    for z = 6:m.Z(end) % for each layer
+    for z = 13:m.Z(end) % for each layer
 
         % get indices of interest
         indices = maskToIndex(F, z); 

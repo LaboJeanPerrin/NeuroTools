@@ -14,6 +14,21 @@ imshow(m(:,:,z,t),[300 1000])
 %% stack viewer
 % generate a figure with gui to navigate in the current hyperstack
 stackViewer(F,m)
+%%
+load('/home/ljp/Science/Projects/RLS_Hugo/Data/2018-01-11/Run 06/Files/IP/graystack.mmap.mat', 'mmap')
+imshow(mmap.Data.raw(:,:,3), [300 800]);
+img = NT.Image(double(mmap.Data.raw(:,:,3)));
+img.background()
+%% Background
+% le background est mal calculé sur des images moyennées !
+bg = NaN(1,13);
+for z=1:13
+    img = NT.Image(double(mmap.Data.raw(:,:,z)));
+    bg(z) = img.background();
+end
+
+
+
 %% get reference brain focus
 % same getfocus but for reference brain
 param.run_number = 5;
@@ -41,7 +56,7 @@ param.date = '2018-01-11';
 param.run_number = 6;
 F = NT.Focus({param.cwd, '', param.date, param.run_number});
 
-%% create binary file
+%% create binary file from Tif
 % read tif images, write it to binary file and store Mmap object in a file
 % for the given z and t
 % Layer to map
@@ -95,15 +110,17 @@ maskViewer(F, m)
 tic; createSignalStacks(F, m); toc
 %% load library to compute baseline
 %
-loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.so', '/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.h')
+[notfound,warnings]=loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.so', '/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.h');
 % libfunctions('caTools')
 % libfunctions caTools -full
 % [doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr] runquantile(doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr)
 % OUT = calllib('caTools', 'runquantile', IN, OUT, 1500, 100, 0.1, 1, 1);
 %% compute baseline on signal stack using caTools library
 %
-tic; caToolsRunquantile(F); toc;
-
+caToolsRunquantile(F);
+%% compute background
+%
+createGrayStack(F, m)
 
 
 
