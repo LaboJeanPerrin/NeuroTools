@@ -14,7 +14,10 @@ imshow(m(:,:,z,t),[300 1000])
 %% stack viewer
 % generate a figure with gui to navigate in the current hyperstack
 stackViewer(F,m)
-%%
+%% get reference brain focus
+% same getfocus but for reference brain
+param.run_number = 5;
+Fref = NT.Focus({param.cwd, '', param.date, param.run_number});
 
 
 
@@ -37,8 +40,9 @@ F = NT.Focus({param.cwd, '', param.date, param.run_number});
 % read tif images, write it to binary file and store Mmap object in a file
 % for the given z and t
 % Layer to map
-param.Layers = 3:10; 
+param.Layers = 3:15; 
 param.T = 1:length(F.set.frames);
+fprintf('Wait about %d seconds', floor(length(param.Layers)*length(param.T)/30));
 tic; tifToMmap(F, 'raw', {'z', param.Layers, 't', param.T}); toc
 
 %% retrieve Mmap object
@@ -51,6 +55,7 @@ m = Mmap(F, 'raw');
 param.RefLayers = 8:10;
 % determine index of reference brain scan for drift correction
 param.RefIndex = 10; 
+fprintf('Wait about %d seconds', floor(length(param.T)/10));
 tic; driftCompute(F,m,{...
     'RefLayers', param.RefLayers, ...
     'RefIndex', param.RefIndex, ...
@@ -62,6 +67,7 @@ tic; driftCompute(F,m,{...
 seeDriftCorrection(F);
 %% applies drift if it is ok
 % applies drift correction and records mmap
+fprintf('Wait about %d seconds', floor(length(param.Layers)*length(param.T)/90));
 tic; driftApply(F, m); toc
 %% retrieve Mmap object
 % reads the mmap object from the file
@@ -75,7 +81,7 @@ tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
 %% find ROI using reference brain mask
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
-autoROI(F, F)
+autoROI(F, Fref)
 
 
 

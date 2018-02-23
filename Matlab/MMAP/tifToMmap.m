@@ -7,8 +7,8 @@ function tifToMmap(F, tag, kwargs)
 %       t frames of interest TODO
 
 % default values
-X = 1:F.IP.width;           % x size
-Y = 1:F.IP.height;          % y size
+X = 1:F.IP.height;          % x size
+Y = 1:F.IP.width;           % y size
 Z = [F.sets.id];            % id of all layers (ex 1:20)
 T = 1:length(F.set.frames); % number of image per layer (ex 1:3000)
 

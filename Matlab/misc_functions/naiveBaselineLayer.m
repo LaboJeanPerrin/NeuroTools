@@ -1,4 +1,4 @@
-function naiveBaselineLayer(F, m, Layer)
+function naiveBaselineLayer(F, m, Layer, binning)
 %naiveBaseline computes naively the baseline for only one layer and stores it to a file
 
 % make a directory to store baseline (could already exist)

@@ -5,9 +5,9 @@ function seeDriftCorrection(F)
     m = Mmap(F, 'raw');
     
     figure
-    h = imshow(egalize_histogram(F,m(:,:,5,1)));
+    h = imshow(equalize_histogram(F,m(:,:,5,1)));
     for t = m.T
-        img = imtranslate(egalize_histogram(F,m(:,:,5,t)), [-dx(t), -dy(t)]);
+        img = imtranslate(equalize_histogram(F,m(:,:,5,t)), [-dx(t), -dy(t)]);
         set(h, 'Cdata', img);
         drawnow
     end
