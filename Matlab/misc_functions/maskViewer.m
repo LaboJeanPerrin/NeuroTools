@@ -1,4 +1,7 @@
-function maskViewer(F, m, mask)
+function maskViewer(F, m)
+
+maskPath = fullfile(F.dir.IP, 'mask.mat');
+load(maskPath, 'mask');
 
 Z = m.Z;
 

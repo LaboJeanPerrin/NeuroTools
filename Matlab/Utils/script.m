@@ -85,7 +85,9 @@ tic; mapToReferenceBrain(F, m, mref, param.RefIndex); toc
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
 autoROI(F, Fref)
-
+%% check if guessed ROI is ok
+% like hyperstack
+maskViewer(F, m)
 
 
 
