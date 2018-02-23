@@ -14,14 +14,17 @@ function createGrayStack(F)
 
     fclose(fid);
     
+    % data
     x = m.x;
     y = m.y;
     z = m.z;
+    t = 1; %#ok<NASGU>
     Z = m.Z;
+    T = 1; %#ok<NASGU>
 
     % create corresponding mmap info
     mmap = memmapfile(output,...
         'Format',{'uint16', [x, y, z],'bit'}); %#ok<NASGU>
-    save(outputInfo, 'mmap', 'x', 'y', 'z', 'Z');
+    save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T');
 
 end

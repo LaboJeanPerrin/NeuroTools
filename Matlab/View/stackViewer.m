@@ -20,14 +20,16 @@ function stackViewer(F, tag)
         'Position', [1160 300 20 200],...
         'Callback', @actualize_z);
 
-    % t slider
-    uicontrol('Style', 'slider',...
-        'Min',m.T(1),'Max',m.T(end),'Value',t,...
-        'Position', [20 40 1100 20],...
-        'Callback', @actualize_t);
+    if t > 1
+        % t slider
+        uicontrol('Style', 'slider',...
+            'Min',m.T(1),'Max',m.T(end),'Value',t,...
+            'Position', [20 40 1100 20],...
+            'Callback', @actualize_t);
+    end
 
-    f.Visible = 'on';
-    set(f, 'Position',[200 200 1280 900]);
+        f.Visible = 'on';
+        set(f, 'Position',[200 200 1280 900]);
     
     function actualize_z(source, ~)
         z = floor(source.Value);

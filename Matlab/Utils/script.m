@@ -50,16 +50,20 @@ maskViewer(F)
 %% if it is convincing, create signal stacks (quite long, how ?)
 createSignalStacks(F, param.Layers);
 %% once signal stacks are created, load library to compute baseline
-[~,~] = loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.so',...
-                    '/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.h');
+[~,~] = loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.so',...
+                    '/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.h');
 %% compute baseline on signal stack using caTools library
 caToolsRunquantile(F, param.Layers);
+%% compute gray stack and view it
+createGrayStack(F)
+stackViewer(F, 'IP/graystack')
 %% compute background
 background = 400;
 %% compute DFF
-dff(F, background);
-
-
+dff(F, param.Layers, background);
+%% view DFF
+stackViewer2D(F, param.Layers)
+% TODO write stackViewer for Mmap2D
 
 
 
@@ -74,12 +78,6 @@ dff(F, background);
 rename(param.date,param.run_number);
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-
-
-%% compute background
-%
-createGrayStack(F, m)
 
 
 
