@@ -38,7 +38,7 @@ F = NT.Focus({param.cwd, '', param.date, param.run_number});
 % for the given z and t
 % Layer to map
 param.Layers = 3:10; 
-param.T = length(F.set.t); 
+param.T = 1:length(F.set.frames);
 tic; tifToMmap(F, 'raw', {'z', param.Layers, 't', param.T}); toc
 
 %% retrieve Mmap object
