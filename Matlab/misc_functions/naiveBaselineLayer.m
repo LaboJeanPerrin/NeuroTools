@@ -11,9 +11,9 @@ indices = maskToIndex(F, Layer);
 
 fid = fopen(outputMmap, 'wb');
 
-for i = indices % for all pixel in layer's ROI
+for i = indices' % for all pixel in layer's ROI
     [x,y] = ind2sub([F.IP.height F.IP.width], i); % get the x,y corresponding position
-    naiveBaseline(m(x,y,Layer, :), fid); % let the baseline being written number after number
+    naiveBaseline(m(x,y,Layer, :), fid, i); % let the baseline being written number after number
 end
 
 fclose(fid);

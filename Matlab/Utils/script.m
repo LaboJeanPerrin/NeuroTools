@@ -76,6 +76,9 @@ tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
 autoROI(F, F)
+%% compute baseline
+% naive
+tic; naiveBaselineLayer(F, m, 3); toc
 
 
 
