@@ -4,6 +4,8 @@ function createContourManual(Layers, F, ind_Refstack,binsize)
 % F             focus
 % ind_Refstac   indices of reference stack
 
+% TODO integrate Geoffrey's easy algorithm
+
 for layer = Layers
     try % try to load existing contour
         load(fullfile(F.dir.files, 'signal_stacks', num2str(layer), 'contour.mat'));

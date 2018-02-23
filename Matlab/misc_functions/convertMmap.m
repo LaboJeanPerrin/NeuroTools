@@ -1,4 +1,5 @@
 %convertMmap is a small utility to help convert mmap
+% this script is done to be edited
 clc
 % inputmap
 m = Mmap(F, 'raw');

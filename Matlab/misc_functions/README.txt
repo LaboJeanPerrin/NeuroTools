@@ -1,1 +1,1 @@
-Here, there will be misc function not yet integrated to a certain tool.
+Misc functions are not intended to be integrated to a certain tool.

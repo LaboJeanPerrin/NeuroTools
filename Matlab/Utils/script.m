@@ -69,6 +69,22 @@ m = Mmap(F, 'corrected');
 %% stack viewer
 % view corrected hyperstack
 stackViewer(F,m)
+%% map to ref brain
+% use imregdemons
+tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
+%% find ROI using reference brain mask
+% use the mask predefined on the reference brain to find the mask for the
+% current brain
+
+
+
+
+%% select ROI manually on reference brain
+% displays all the layers one after the other
+selectROI(F, m, param.RefIndex)
+
+
+
 
 
 
@@ -79,16 +95,12 @@ createContourManual(param.Layers, F, param.ind_Refstack, param.binsize);
 %% applies drift correction (mmap paf)
 
 ...
-
+...
+...
 
 
 
 %% % % % % % % % % % % % % % % % % % % % % % % % % % %  
-
-
-
-% TODO convert to paf and apply drift
-AntiDrift_OpenSpim_v3(Layers_stack_ref, Layers, F, ind_Refstack, 'true');
 
 % todo 
 create_signal_stack_RLS_v2(Layers, binsize, F, ind_Refstack);

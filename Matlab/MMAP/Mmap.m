@@ -16,7 +16,7 @@ classdef Mmap < handle
             mmapPath = fullfile(F.dir.files, [tag '.mmap.mat']);
             load(mmapPath, 'mmap', 'X', 'Y', 'Z', 'T');
             self.mmap = mmap;
-            self.width = X(end); %#ok<COLND>
+            self.width = X(end); %#ok<COLND> % TODO be clear with what X and Y are !!
             self.height = Y(end); %#ok<COLND>
             self.Z = Z;
             self.T = T;
