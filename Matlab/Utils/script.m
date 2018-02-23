@@ -74,7 +74,9 @@ stackViewer(F,m)
 tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
 %% find ROI using reference brain mask
 % use the mask predefined on the reference brain to find the mask for the
-% current brain
+% current brain, saves autoROI as a mask.mat file
+autoROI(F, F)
+
 
 
 
@@ -85,18 +87,6 @@ selectROI(F, m, param.RefIndex)
 
 
 
-
-
-
-%% create ROI manually
-% displays each layer in p.layers to manually select the ROI
-createContourManual(param.Layers, F, param.ind_Refstack, param.binsize);
-
-%% applies drift correction (mmap paf)
-
-...
-...
-...
 
 
 
