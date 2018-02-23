@@ -4,7 +4,6 @@ classdef Focus < handle
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
         
-        study
         date
         run
         name
@@ -19,7 +18,7 @@ classdef Focus < handle
         set
         IP       
         
-% This part is not implemented
+% This part is not implemented (TODO)
 %         dx
 %         dy
 %         dt
@@ -36,24 +35,21 @@ classdef Focus < handle
             % --- Inputs --------------------------------------------------
             
             in = inputParser;
-            in.addRequired('path', @ischar);        % Hugo Trentesaux added path to get rid of Mlab projects plugin
-            in.addRequired('study', @ischar);
+            in.addRequired('path', @ischar);
             in.addRequired('date', @ischar);
             in.addRequired('run', @(x) ischar(x) || isnumeric(x));
-            
             in.parse(args{:})
                     
             % --- Basic properties ----------------------------------------
-            
-            this.study = in.Results.study;
+
             this.date = in.Results.date;
             
             if ischar(in.Results.run)
                 this.run = in.Results.run;
             else
-                this.run = ['Run ' num2str(in.Results.run, '%02i')];
+                this.run = ['Run_' num2str(in.Results.run, '%02i')];
             end
-            this.name = [this.study ' - ' this.date ' (' this.run ')'];
+            this.name = [this.date ' (' this.run ')'];
             
             % --- Directories ---------------------------------------------
         
@@ -64,7 +60,7 @@ classdef Focus < handle
             
             % --- Data dir
             
-            this.dir.data = fullfile(this.dir.root, 'Data', this.study, this.date, this.run);
+            this.dir.data = fullfile(this.dir.root, 'Data', this.date, this.run);
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
@@ -76,15 +72,12 @@ classdef Focus < handle
             this.dir.images = fullfile(this.dir.data, 'Images');
             this.dir.files = fullfile(this.dir.data, 'Files');
             this.dir.IP = fullfile(this.dir.files, 'IP');
-            this.dir.figures = fullfile(in.Results.path, 'Figures');
-            this.dir.movies = fullfile(in.Results.path, 'Movies');
             
-            % --- create folders if necessary (TODO all necessary folders)
+            % --- create folders if necessary
             
             if ~exist(this.dir.files, 'dir')
-                disp('creating File directory')
-                mkdir(this.dir.files); % TODO handle error properly
-                mkdir(this.dir.IP); % TODO handle error properly
+                disp('creating ''Files'' directory')
+                mkdir(this.dir.files);
             end
 
             % --- Parameters ----------------------------------------------

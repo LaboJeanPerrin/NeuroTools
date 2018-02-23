@@ -1,46 +1,44 @@
-
-function driftApply(F, m)
+function driftApply(F)
 %driftApply creates a binary file with the translated values
 
-% load drift
-driftPath = fullfile(F.dir.IP, 'Drifts.mat');
-load(driftPath, 'dx', 'dy')
-    
-% load mmap info
-rawMatPath = fullfile(F.dir.files, [m.tag '.mmap.mat']);
-load(rawMatPath, 'X', 'Y', 'Z', 'T');
+    % load drift
+    driftPath = fullfile(F.dir.IP, 'Drifts.mat');
+    load(driftPath, 'dx', 'dy')
 
-% define output files
-outputMmap = fullfile(F.dir.files, 'corrected.mmap');
-outputMmapInfo = fullfile(F.dir.files, 'corrected.mmap.mat');
+    % load mmap info
+    m = Mmap(F, 'raw');
 
-w = waitbar(0, 'Applying computed drift');
+    % define output files
+    output = fullfile(F.dir.files, 'corrected.bin');
+    outputInfo = fullfile(F.dir.files, 'corrected.mat');
 
-% write the binary file
-fid = fopen(outputMmap, 'wb');
-for t = T % along t
-    for z = Z % along z
-        fwrite(fid,...
-            imtranslate(m(:,:,z,t),...
-            [-dx(t), -dy(t)]),...
-            'uint16');
+    w = waitbar(0, 'Applying computed drift');
+
+    % write the binary file
+    fid = fopen(output, 'wb');
+    for t = m.T % along t
+        for z = m.Z % along z
+            fwrite(fid,...
+                imtranslate(m(:,:,z,t),...
+                [-dx(t), -dy(t)]),...
+                'uint16');
+        end
+        waitbar(t/m.t)
     end
-    waitbar(t/T(end)) %#ok<COLND>
-end
-fclose(fid);
+    fclose(fid);
 
-close(w)
+    close(w)
 
-% get the dimension of the 4D matrix
-x = length(X); % width
-y = length(Y); % heigth
-z = length(Z); % number of layers of interest
-t = length(T); % number of frames par layer
+    x=m.x;
+    y=m.y;
+    z=m.z;
+    t=m.t;
+    Z=m.Z; %#ok<NASGU>
+    T=m.T; %#ok<NASGU>
 
-% save the mmap with the correct filename
-mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'}); %#ok<NASGU>
-save(outputMmapInfo, 'mmap', 'X', 'Y', 'Z', 'T');
-
-% TODO rm raw binary file
+    % map the binary file
+    mmap = memmapfile(output,'Format',{'uint16',[x,y,z,t],'bit'}); %#ok<NASGU>
+    % save it to a matlab file
+    save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T');
 
 end

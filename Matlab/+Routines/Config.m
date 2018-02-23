@@ -15,17 +15,16 @@ confPath = fullfile(F.dir.files, tag);
 
 % look for config file and continue only if ther isn't
 if exist(confPath, 'file')
-    disp('config file found, loading it');
+    disp('Config file found, loading it...');
     load(confPath, 'config');
     % save config elements to focus
-    configTowardsFocus(config, F) %#ok<NODEF>
+    configToFocus(config, F) %#ok<NODEF>
     
     disp('Config.m loaded');
     return
 end
 
-disp('No config file found, generating one');
-
+disp('No config file found, generating one...');
 
 
 % === Initialize config ===================================================
@@ -113,38 +112,21 @@ for i = 1:nL
 
 end
 
-
-
-
-
 % --- Save configuration
-% TODO à remettre en forme
 
 % save config elements to focus
-configTowardsFocus(config, F)
-
+configToFocus(config, F)
 save(confPath, 'config')
-
-disp('config file saved')
+disp('Config file saved.')
 
 end
 
-% Conf.save('dx', config.dx, ['Pixel x-size (' config.units.dx ')']);
-% Conf.save('dy' ,config.dy, ['Pixel y-size (' config.units.dy ')']);
-% Conf.save('dt', config.dt, ['Inverse of the acquisition frequency (' config.units.dt ')']);
-% Conf.save('exposure', config.exposure, ['Exposure time (' config.units.exposure ')']);
-% Conf.save('sets', config.sets, 'Sets (layers and/or scans)');
-% Conf.save('IP', config.IP, 'Image processing parameters');
-% Conf.save('units', config.units, 'Summary of the units used in this configuration file');
-
-function configTowardsFocus(config, F)
+function configToFocus(config, F)
 
     % save config elements to focus
     F.units = config.units;
     F.sets = config.sets;
     F.IP = config.IP;
-%         dx
-%         dy
-%         dt
-%         exposure
+
+    % TODO other elements
 end

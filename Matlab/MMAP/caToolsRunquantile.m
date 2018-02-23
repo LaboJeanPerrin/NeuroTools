@@ -1,23 +1,23 @@
-function caToolsRunquantile(F)
+function caToolsRunquantile(F, Layers)
 %caToolsRunquantile computes running quantile using caTools
 
     baselinePath = fullfile(F.dir.IP, 'baseline');
-    mkdir(baselinePath);
+    disp('creating ''baseline'' directory'); mkdir(baselinePath);
+    
+    for z = Layers
         
-    for z = 10:12
-        inputMmapInfo = fullfile(F.dir.IP, 'signalStacks', [num2str(z, '%02d') '.mmap.mat']);
-        outputMmap = fullfile(baselinePath, [num2str(z, '%02d') '.mmap']);
-        outputMmapInfo = fullfile(baselinePath, [num2str(z, '%02d') '.mmap.mat']);
+        m = Mmap2D(F, 'signalStacks', z);
+        
+        output = fullfile(baselinePath, [num2str(z, '%02d') '.bin']);
+        outputInfo = fullfile(baselinePath, [num2str(z, '%02d') '.mat']);
 
-        load(inputMmapInfo, 'mmap', 'T', 'indices');
+        fid = fopen(output, 'wb');
 
-        fid = fopen(outputMmap, 'wb');
-
-        OUT = NaN(length(T), length(indices));
+        OUT = NaN(m.t, m.numIndex);
 
         tic
         [~, OUT] = calllib('caTools', 'runquantile',...
-                mmap.Data.raw(:,:),... input matrix
+                m(:,:),... input matrix
                 OUT,... output variable
                 1500,... size column (time)
                 100,... window
@@ -33,12 +33,30 @@ function caToolsRunquantile(F)
             'double');
 
         fclose(fid);
+        
+        % get values
+        x = m.x;    %#ok<NASGU>
+        y = m.y;    %#ok<NASGU>
+        z = z;      %#ok<FXSET,ASGSL>
+        t = m.t;
+        Z = z;      %#ok<NASGU>
+        T = m.T;    %#ok<NASGU>
+        indices = m.indices; %#ok<NASGU>
+        numIndex = m.numIndex;
 
-        % generate and save mmap info
-        mmap = memmapfile(outputMmap,...
-                    'Format',{'double',[length(T), length(indices)],'raw'});
-        save(outputMmapInfo, 'mmap', 'T', 'indices');
-
+        % create corresponding mmap info
+        mmap = memmapfile(output,...
+            'Format',{'double',[t, numIndex],'bit'}); %#ok<NASGU>
+        save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T', 'indices', 'numIndex');
     end
-
 end
+
+% MORE
+
+% libfunctions('caTools') 	% to know available functions
+% libfunctions caTools -full 	% to learn more about these functions
+% ... function signature
+% [doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr]
+% runquantile(doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr)
+% ... function syntax
+% OUT = calllib('caTools', 'runquantile', IN, OUT, 1500, 100, 0.1, 1, 1);
