@@ -19,6 +19,6 @@ end
 maskPath = fullfile(F.dir.IP, 'mask.mat');
 save(maskPath, 'mask');
 
-
+close gcf
 
 end

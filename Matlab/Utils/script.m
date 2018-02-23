@@ -18,6 +18,9 @@ stackViewer(F,m)
 % same getfocus but for reference brain
 param.run_number = 5;
 Fref = NT.Focus({param.cwd, '', param.date, param.run_number});
+%% get corrected reference mmap stack
+%
+mref = Mmap(Fref, 'corrected');
 
 
 
@@ -33,7 +36,7 @@ param.cwd = pwd;
 %% get focus (load config.mat)
 % get focus by giving current directory, date, and run number
 param.date = '2018-01-11';
-param.run_number = 5;
+param.run_number = 6;
 F = NT.Focus({param.cwd, '', param.date, param.run_number});
 
 %% create binary file
@@ -42,7 +45,7 @@ F = NT.Focus({param.cwd, '', param.date, param.run_number});
 % Layer to map
 param.Layers = 3:15; 
 param.T = 1:length(F.set.frames);
-fprintf('Wait about %d seconds', floor(length(param.Layers)*length(param.T)/30));
+fprintf('Wait about %d seconds\n', floor(length(param.Layers)*length(param.T)/30));
 tic; tifToMmap(F, 'raw', {'z', param.Layers, 't', param.T}); toc
 
 %% retrieve Mmap object
@@ -55,7 +58,7 @@ m = Mmap(F, 'raw');
 param.RefLayers = 8:10;
 % determine index of reference brain scan for drift correction
 param.RefIndex = 10; 
-fprintf('Wait about %d seconds', floor(length(param.T)/10));
+fprintf('Wait about %d seconds\n', floor(length(param.T)/10));
 tic; driftCompute(F,m,{...
     'RefLayers', param.RefLayers, ...
     'RefIndex', param.RefIndex, ...
@@ -67,7 +70,7 @@ tic; driftCompute(F,m,{...
 seeDriftCorrection(F);
 %% applies drift if it is ok
 % applies drift correction and records mmap
-fprintf('Wait about %d seconds', floor(length(param.Layers)*length(param.T)/90));
+fprintf('Wait about %d seconds\n', floor(length(param.Layers)*length(param.T)/80));
 tic; driftApply(F, m); toc
 %% retrieve Mmap object
 % reads the mmap object from the file
@@ -77,7 +80,7 @@ m = Mmap(F, 'corrected');
 stackViewer(F,m)
 %% map to ref brain
 % use imregdemons
-tic; mapToReferenceBrain(F, m, m, param.RefIndex); toc
+tic; mapToReferenceBrain(F, m, mref, param.RefIndex); toc
 %% find ROI using reference brain mask
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
