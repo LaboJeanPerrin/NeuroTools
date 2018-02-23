@@ -1,4 +1,4 @@
-function tifToMmap(F, tag, kwargs)
+function tifToMmap(F, kwargs)
 %rawToMmap takes the tif images and write it in a 4D mmap file
 % F is the focus on the run
 % kwargs are key-word arguments to specify
@@ -7,10 +7,10 @@ function tifToMmap(F, tag, kwargs)
 %       t frames of interest TODO
 
 % default values
-X = 1:F.IP.height;          % x size
-Y = 1:F.IP.width;           % y size
+X = 1:F.IP.width;           % x size
+Y = 1:F.IP.height;          % y size
 Z = [F.sets.id];            % id of all layers (ex 1:20)
-T = 1:length(F.set.frames); % number of image per layer (ex 1:3000)
+T = 1:length(F.set.frames); % number of image per layer (ex 1:1500)
 
 % parse input TODO write validation functions
 p = inputParser;
@@ -27,7 +27,7 @@ Z = p.Results.z;
 T = p.Results.t;
  
 % define output files
-outputMmap = fullfile(F.dir.files, [tag '.mmap']);
+output = fullfile(F.dir.files, [tag '.mmap']);
 outputMmapInfo = fullfile(F.dir.files, [tag '.mmap.mat']);
 
 w = waitbar(0, 'Converting TIF to mmap');

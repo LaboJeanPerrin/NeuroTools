@@ -61,9 +61,8 @@ F = NT.Focus({param.cwd, '', param.date, param.run_number});
 % for the given z and t
 % Layer to map
 param.Layers = 3:15; 
-param.T = 1:length(F.set.frames);
 fprintf('Wait about %d seconds\n', floor(length(param.Layers)*length(param.T)/30));
-tic; tifToMmap(F, 'raw', {'z', param.Layers, 't', param.T}); toc
+tic; tifToMmap(F, 'raw', {'z', param.Layers}); toc
 
 %% retrieve Mmap object
 % reads the mmap object from the file
