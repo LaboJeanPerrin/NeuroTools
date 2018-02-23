@@ -21,10 +21,12 @@ Fref = NT.Focus({param.cwd, '', param.date, param.run_number});
 %% get corrected reference mmap stack
 %
 mref = Mmap(Fref, 'corrected');
+%% select ROI manually on reference brain
+% displays all the layers one after the other
+selectROI(Fref, m, param.RefIndex)
 
 
-
-
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
 %% go in the project directory
@@ -71,7 +73,7 @@ seeDriftCorrection(F);
 %% applies drift if it is ok
 % applies drift correction and records mmap
 fprintf('Wait about %d seconds\n', floor(length(param.Layers)*length(param.T)/80));
-tic; driftApply(F, m); toc
+tic; driftApply(F, m); toc;
 %% retrieve Mmap object
 % reads the mmap object from the file
 m = Mmap(F, 'corrected');
@@ -80,7 +82,7 @@ m = Mmap(F, 'corrected');
 stackViewer(F,m)
 %% map to ref brain
 % use imregdemons
-tic; mapToReferenceBrain(F, m, mref, param.RefIndex); toc
+tic; mapToReferenceBrain(F, m, mref, param.RefIndex); toc;
 %% find ROI using reference brain mask
 % use the mask predefined on the reference brain to find the mask for the
 % current brain, saves autoROI as a mask.mat file
@@ -88,21 +90,28 @@ autoROI(F, Fref)
 %% check if guessed ROI is ok
 % like hyperstack
 maskViewer(F, m)
+%% create signal stacks
+% needed for computing baseline ?
+tic; createSignalStacks(F, m); toc
+%% load library to compute baseline
+%
+loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.so', '/home/ljp/Science/Projects/RLS_Hugo/Tools/caTools.h')
+% libfunctions('caTools')
+% libfunctions caTools -full
+% [doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr] runquantile(doublePtr, doublePtr, int32Ptr, int32Ptr, doublePtr, int32Ptr, int32Ptr)
+% OUT = calllib('caTools', 'runquantile', IN, OUT, 1500, 100, 0.1, 1, 1);
+%% compute baseline on signal stack using caTools library
+%
+tic; caToolsRunquantile(F); toc;
 
 
 
 
-%% compute baseline
-% naive approach is too long (170 000 x 1500 = 255 000 000)
-tic; naiveBaselineLayer(F, m, 3); toc
 
 
 
 
 
-%% select ROI manually on reference brain
-% displays all the layers one after the other
-selectROI(F, m, param.RefIndex)
 
 
 
