@@ -6,7 +6,7 @@ m = Mmap(F, 'raw');
 % input mat map
 inputMmap = fullfile(F.dir.files, [m.tag '.mmap.mat']);
 % outputmap
-outputMmap = fullfile(F.dir.files, 'raw2.mmap');
+outputMmap = fullfile(F.dir.files, 'raw.mmap');
 % output mat map
 outputMmapinfo = fullfile(F.dir.files, 'raw2.mmap.mat');
 
@@ -14,13 +14,15 @@ w = waitbar(0, 'Converting mmap');
 
 % write the binary file
 fid = fopen(outputMmap, 'wb');
-for t = m.T % along t
-    for z = m.Z % along z
+for t = T % along t
+    for z = Z % along z
+        for y = Y
         fwrite(fid,...
-            uint16(m(:,:,z,t)),...
+            mmap.Data.bit(y,:,z,t),...
             'uint16');
+        end
     end
-    waitbar(t/m.T(end))
+    waitbar(t/T(end))
 end
 fclose(fid);
 

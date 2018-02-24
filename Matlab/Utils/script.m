@@ -47,6 +47,14 @@ autoROI(F, Fref)
 selectROI(F, param.RefIndex)
 %% check if guessed ROI is ok
 maskViewer(F)
+
+%% compute baseline without signal stack
+caToolsRunquantileRaw(F);
+
+
+
+
+
 %% if it is convincing, create signal stacks (quite long, how ?)
 createSignalStacks(F, param.Layers);
 %% once signal stacks are created, load library to compute baseline

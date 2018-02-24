@@ -6,8 +6,8 @@ function stackViewer(F, tag)
 
     f = figure('Visible','off'); 
 
-    z = m.z;
-    t = m.t;
+    z = m.Z(1);
+    t = m.T(1);
 
     img = equalize_histogram(m(:,:,z,t)');
 
@@ -20,7 +20,7 @@ function stackViewer(F, tag)
         'Position', [1160 300 20 200],...
         'Callback', @actualize_z);
 
-    if t > 1
+    if m.t > 1
         % t slider
         uicontrol('Style', 'slider',...
             'Min',m.T(1),'Max',m.T(end),'Value',t,...

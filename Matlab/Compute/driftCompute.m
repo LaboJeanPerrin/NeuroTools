@@ -50,7 +50,7 @@ for t = m.T % run across the times
     Img = NT.Image(max(m(X,Y,RefLayers, t),[],3));
     
     % compute the DX and DY with the Fourier transform
-    [dy(t), dx(t)] = Ref.fcorr(Img);
+    [dx(t), dy(t)] = Ref.fcorr(Img);
     
     % plot 1/50 figures
     if ~mod(t,50)
