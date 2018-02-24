@@ -9,10 +9,10 @@ cd /home/ljp/Science/Projects/RLS_Hugo/
 param.cwd = pwd;
 %% get focus
 param.date = '2018-01-11';
-param.run_number = 6;
+param.run_number = 5;
+param.Layers = 3:12; 
 F = NT.Focus({param.cwd, param.date, param.run_number});
 %% create binary file from Tif
-param.Layers = 3:12; 
 tifToMmap(F, {'z', param.Layers});
 %% compute drift on mmap
 param.RefLayers = 8:10;

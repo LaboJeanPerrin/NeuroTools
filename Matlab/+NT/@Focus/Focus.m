@@ -64,7 +64,7 @@ classdef Focus < handle
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
-                warning('Focus:Data', 'No data found for study=%s, date=%s and run=%i.', this.study, this.date, this.run);
+                warning('Focus:Data', 'No data found for date=%s and run=%i.', this.date, this.run);
             end
             
             % --- Other folders
@@ -187,7 +187,7 @@ classdef Focus < handle
             
             % --- Config file ---
             % if there is no config file, create it
-            Routines.Config(this)
+%             Routines.Config(this)
         end
     end
     
