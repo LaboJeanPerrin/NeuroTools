@@ -14,6 +14,8 @@ param.Layers = 3:12;
 F = NT.Focus({param.cwd, param.date, param.run_number});
 %% create binary file from Tif
 tifToMmap(F, {'z', param.Layers});
+%% view hyperstack
+stackViewer(F, 'raw')
 %% compute drift on mmap
 param.RefLayers = 8:10;
 param.RefIndex = 10; 
@@ -48,39 +50,24 @@ selectROI(F, param.RefIndex)
 %% check if guessed ROI is ok
 maskViewer(F)
 
-%% compute baseline without signal stack
-% caToolsRunquantileRaw(F);
 
-
-% -> replace by a new memory map on the corrected stacks
-
-
-%% if it is convincing, create signal stacks (quite long, how ?)
-% createSignalStacks(F, param.Layers);
-
-
-
-%% once signal stacks are created, load library to compute baseline
+%% load library to compute baseline
 [~,~] = loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.so',...
                     '/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.h');
-%% compute baseline on signal stack using caTools library
-caToolsRunquantile(F, param.Layers);
+%% compute baseline using caTools library
+caToolsRunquantile(F, 4:5);
+%% view baseline
+stackViewer2D(F, 'baseline', 3:5)
 %% compute gray stack and view it
 createGrayStack(F)
 stackViewer(F, 'IP/graystack')
 %% compute background
 background = 400;
 %% compute DFF
-dff(F, param.Layers, background);
+dff(F, 3, background);
 %% view DFF
-stackViewer2D(F, param.Layers)
-% TODO write stackViewer for Mmap2D
+sigViewer2D(F, 'dff', 3)
 
-
-
-
-% script for image analysis (inspired from Routine_Analysis_RLS)
-% 2018-02 Hugo Trentesaux
 
 %% utilities
 % different utilities to run when necessary
@@ -89,11 +76,6 @@ stackViewer2D(F, param.Layers)
 rename(param.date,param.run_number);
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-
-
-
-%% % % % % % % % % % % % % % % % % % % % % % % % % % %  
 
 % todo 
 

@@ -45,7 +45,7 @@ clearvars -except F m param
 
 %% mmaplin creation
 
-inputMmap = fullfile(F.dir.files, 'corrected.mat');
+inputMmap = fullfile(F.dir.files, 'raw.mat');
 mmapfile = fullfile(F.dir.files, 'corrected.bin');
 load(inputMmap)
 
@@ -72,8 +72,19 @@ buffer = zeros(x,y);
 buffer(indices) = m(indices,3,1);
 imshow(equalize_histogram(buffer)');
 
+buffer(indices) = mmap.Data.bit(:,1);
+imshow(buffer')
 
+%%
 
+for z = 3:7
+    inputInfo = fullfile(F.dir.IP, 'dff', [num2str(z, '%02d') '.mat']);
+    output = fullfile(F.dir.IP, 'dff', [num2str(z, '%02d') '.bin']);
+        load(inputInfo, 'mmap', 'indices', 'numIndex');
+    mmap = memmapfile(output,...
+            'Format',{'double',[numIndex, t],'bit'});
+    save(inputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T', 'indices', 'numIndex');
+end
 
 
 
