@@ -36,9 +36,10 @@ function driftApply(F)
     Z=m.Z; %#ok<NASGU>
     T=m.T; %#ok<NASGU>
 
-    % map the binary file
+    % map the binary file x y and indices
     mmap = memmapfile(output,'Format',{'uint16',[x,y,z,t],'bit'}); %#ok<NASGU>
+    mmaplin = memmapfile(output,'Format',{'uint16',[x*y,z,t],'bit'}); %#ok<NASGU>
     % save it to a matlab file
-    save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T');
+    save(outputInfo, 'mmap', 'mmaplin', 'x', 'y', 'z', 't', 'Z', 'T');
 
 end

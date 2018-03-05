@@ -42,3 +42,27 @@ mmap = memmapfile(outputMmap,'Format',{'uint16',[x,y,z,t],'raw'});
 save(outputMmapinfo, 'mmap', 'X', 'Y', 'Z', 'T');
 
 clearvars -except F m param
+
+%% mmaplin creation
+
+inputMmap = fullfile(F.dir.files, 'corrected.mat');
+mmapfile = fullfile(F.dir.files, 'corrected.bin');
+load(inputMmap)
+
+    mmaplin = memmapfile(mmapfile,'Format',{'uint16',[x*y,z,t],'bit'}); 
+    imshow(reshape(equalize_histogram(mmaplin.Data.bit(:,1,1)), [x y])');
+    
+   
+    save(inputMmap, 'mmap', 'mmaplin', 'x', 'y', 'z', 't', 'Z', 'T');
+    
+        indices = maskToIndex(F, 3);
+    
+    buffer = zeros(x,y);
+    buffer(indices) = mmaplin.Data.bit(indices,1,1);
+    imshow(equalize_histogram(buffer)');
+    
+    
+    
+    
+    
+  
