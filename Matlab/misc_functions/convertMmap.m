@@ -53,7 +53,7 @@ load(inputMmap)
     imshow(reshape(equalize_histogram(mmaplin.Data.bit(:,1,1)), [x y])');
     
    
-    save(inputMmap, 'mmap', 'mmaplin', 'x', 'y', 'z', 't', 'Z', 'T');
+    save(inputMmap, 'x', 'y', 'z', 't', 'Z', 'T');
     
         indices = maskToIndex(F, 3);
     
@@ -62,7 +62,21 @@ load(inputMmap)
     imshow(equalize_histogram(buffer)');
     
     
+%%
     
+m = Mmap(F, 'corrected');
+
+imshow(equalize_histogram(m(:,:,3,1))')
     
-    
-  
+buffer = zeros(x,y);
+buffer(indices) = m(indices,3,1);
+imshow(equalize_histogram(buffer)');
+
+
+
+
+
+
+
+
+
