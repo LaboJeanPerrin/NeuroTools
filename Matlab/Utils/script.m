@@ -49,14 +49,17 @@ selectROI(F, param.RefIndex)
 maskViewer(F)
 
 %% compute baseline without signal stack
-caToolsRunquantileRaw(F);
+% caToolsRunquantileRaw(F);
 
 
-
+% -> replace by a new memory map on the corrected stacks
 
 
 %% if it is convincing, create signal stacks (quite long, how ?)
-createSignalStacks(F, param.Layers);
+% createSignalStacks(F, param.Layers);
+
+
+
 %% once signal stacks are created, load library to compute baseline
 [~,~] = loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.so',...
                     '/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.h');
