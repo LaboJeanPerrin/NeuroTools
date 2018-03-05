@@ -9,9 +9,9 @@ function stackViewer(F, tag)
     z = m.Z(1);
     t = m.T(1);
 
-    img = equalize_histogram(m(:,:,z,t)');
+    img = m(:,:,z,t)';
 
-    h = imshow(img);
+    h = imshow(img, [400 700]);
     title(['z=' num2str(z) '   t=' num2str(t)]);
 
     % z slider
@@ -33,7 +33,7 @@ function stackViewer(F, tag)
     
     function actualize_z(source, ~)
         z = floor(source.Value);
-        img = equalize_histogram(m(:,:,z,t)');
+        img = m(:,:,z,t)';
         set(h, 'Cdata', img);
         title(['z=' num2str(z) '   t=' num2str(t)]);
         drawnow;
@@ -41,7 +41,7 @@ function stackViewer(F, tag)
 
     function actualize_t(source, ~)
         t = floor(source.Value);
-        img = equalize_histogram(m(:,:,z,t)');
+        img = m(:,:,z,t)';
         set(h, 'Cdata', img);
         title(['z=' num2str(z) '   t=' num2str(t)]);
         drawnow;

@@ -1,4 +1,4 @@
-function stackViewer2D(F, tag, Layers)
+function sigViewer2D(F, tag, Layers)
 %stackViewer2D aims to produce the same result as stackViewer, but for 2D mmaps
 
 m = {};
@@ -17,11 +17,11 @@ mgray = Mmap(F, 'IP/graystack');
     z = Layers(1);
     t = T(1);
 
-    img = mgray(:,:,z,1);
+    img = NaN(1018,634);
     img(m{z}.indices) = m{z}.mmap.Data.bit(t,:);
     imgh = img';
 
-    h = imshow(imgh, [400 700]);
+    h = imshow(imgh, [-.5 2]);
     title(['z=' num2str(z) '   t=' num2str(t)]);
 
     % z slider
@@ -43,7 +43,7 @@ mgray = Mmap(F, 'IP/graystack');
     
     function actualize_z(source, ~)
         z = floor(source.Value);
-        img = mgray(:,:,z,1);
+        img = NaN(1018,634);
         img(m{z}.indices) = m{z}.mmap.Data.bit(t,:);
         imgh = img';
         set(h, 'Cdata', imgh);
@@ -53,7 +53,7 @@ mgray = Mmap(F, 'IP/graystack');
 
     function actualize_t(source, ~)
         t = floor(source.Value);
-        img = mgray(:,:,z,1);
+        img = NaN(1018,634);
         img(m{z}.indices) = m{z}.mmap.Data.bit(t,:);
         imgh = img';
         set(h, 'Cdata', imgh);
