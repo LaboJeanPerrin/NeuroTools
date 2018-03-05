@@ -29,17 +29,14 @@ function driftApply(F)
 
     close(w)
 
-    x=m.x;
+    x=m.x; %#ok<*NASGU>
     y=m.y;
     z=m.z;
     t=m.t;
-    Z=m.Z; %#ok<NASGU>
-    T=m.T; %#ok<NASGU>
-
-    % map the binary file x y and indices
-    mmap = memmapfile(output,'Format',{'uint16',[x,y,z,t],'bit'}); %#ok<NASGU>
-    mmaplin = memmapfile(output,'Format',{'uint16',[x*y,z,t],'bit'}); %#ok<NASGU>
-    % save it to a matlab file
-    save(outputInfo, 'mmap', 'mmaplin', 'x', 'y', 'z', 't', 'Z', 'T');
+    Z=m.Z;
+    T=m.T;
+    
+    % save info to a matlab file
+    save(outputInfo, 'x', 'y', 'z', 't', 'Z', 'T');
 
 end

@@ -53,9 +53,7 @@ y = length(Y); % heigth
 z = length(Z); % number of layers of interest
 t = length(T); % number of frames par layer
 
-% map the binary file
-mmap = memmapfile(output,'Format',{'uint16',[x,y,z,t],'bit'}); %#ok<NASGU>
-% save it to a matlab file
-save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T');
+% save info to a matlab file
+save(outputInfo, 'x', 'y', 'z', 't', 'Z', 'T');
 
 end
