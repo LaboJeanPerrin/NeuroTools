@@ -55,18 +55,18 @@ maskViewer(F)
 [~,~] = loadlibrary('/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.so',...
                     '/home/ljp/Science/Projects/RLS_Hugo/Programs/NeuroTools/Tools/caTools.h');
 %% compute baseline using caTools library
-caToolsRunquantile(F, 4:5);
+caToolsRunquantile(F, param.Layers);
 %% view baseline
-stackViewer2D(F, 'baseline', 3:5)
+stackViewer2D(F, 'baseline', param.Layers)
 %% compute gray stack and view it
 createGrayStack(F)
 stackViewer(F, 'IP/graystack')
 %% compute background
 background = 400;
 %% compute DFF
-dff(F, 3, background);
+dff(F, param.Layers, background);
 %% view DFF
-sigViewer2D(F, 'dff', 3)
+sigViewer2D(F, 'dff', param.Layers)
 
 
 %% utilities
