@@ -2,39 +2,45 @@ function dff(F, Layers, background)
 %dff computes dff for current brain
 
 dffPath = fullfile(F.dir.IP, 'dff');
-disp('creating ''baseline'' directory'); mkdir(dffPath);
+disp('creating ''dff'' directory'); mkdir(dffPath);
 
     for z = Layers
-               
-        msig = Mmap2D(F, 'signalStacks', z);
-        mbas = Mmap2D(F, 'baseline', z);
+        
+        % sigstack (x,y,z,t) ((xy,z,t))
+        msig = Mmap(F, 'corrected');
         m = msig;
+        % basestack (t, xy)
+        basePath = fullfile(F.dir.IP, 'baseline', [num2str(z, '%02d') '.mat']);
+        load(basePath, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T', 'indices', 'numIndex');
+        mbas = mmap;
                 
         output = fullfile(dffPath, [num2str(z, '%02d') '.bin']);
         outputInfo = fullfile(dffPath, [num2str(z, '%02d') '.mat']);
         
         fid = fopen(output, 'wb');
         
+        tic
         % compute dff
         fwrite(fid,...
-            (double(msig(:,:))-mbas(:,:) ./ (mbas(:,:) - background)),...
+            (double(squeeze(msig(indices, z, :))') - mbas.Data.bit(:,:)) ./ ...
+                ((mbas.Data.bit(:,:) - background)),...
             'double');
+        
+        toc
 
         fclose(fid);
         
         % get values
-        x = m.x;    %#ok<NASGU>
-        y = m.y;    %#ok<NASGU>
-        z = z;      %#ok<FXSET,ASGSL>
+        x = m.x; %#ok<*NASGU>
+        y = m.y;
+        % z
         t = m.t;
-        Z = z;      %#ok<NASGU>
-        T = m.T;    %#ok<NASGU>
-        indices = m.indices; %#ok<NASGU>
-        numIndex = m.numIndex;
+        Z = z; 
+        T = m.T;
 
         % create corresponding mmap info
         mmap = memmapfile(output,...
-            'Format',{'double',[t, numIndex],'bit'}); %#ok<NASGU>
+            'Format',{'double', [t, numIndex],'bit'});
         save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T', 'indices', 'numIndex');
 
     end

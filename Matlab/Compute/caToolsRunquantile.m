@@ -6,20 +6,21 @@ function caToolsRunquantile(F, Layers)
     
     for z = Layers
         
-        m = Mmap2D(F, 'signalStacks', z);
+        m = Mmap(F, 'corrected');
         
         output = fullfile(baselinePath, [num2str(z, '%02d') '.bin']);
         outputInfo = fullfile(baselinePath, [num2str(z, '%02d') '.mat']);
 
-        fid = fopen(output, 'wb');
-
-        OUT = NaN(m.t, m.numIndex);
+        indices = maskToIndex(F, z);
+        numIndex = length(indices);
+        
+        OUT = NaN(m.t, numIndex);
 
         tic
         [~, OUT] = calllib('caTools', 'runquantile',...
-                m(:,:),... input matrix
+                squeeze(m(indices, z, :))',... input matrix (t, index)
                 OUT,... output variable
-                1500,... size column (time)
+                m.t*numIndex,... size of input matrix
                 100,... window
                 0.1,... quantile
                 1,... lenght of quantile vector (here only one)
@@ -27,26 +28,24 @@ function caToolsRunquantile(F, Layers)
                 );
         toc
 
-        % write baseline to binary file (cast to double operated by matlab)
+        fid = fopen(output, 'wb');
+        % write baseline to binary file (seems that cast to double is operated by matlab)
         fwrite(fid,...
             OUT,...
             'double');
-
         fclose(fid);
         
         % get values
-        x = m.x;    %#ok<NASGU>
-        y = m.y;    %#ok<NASGU>
-        z = z;      %#ok<FXSET,ASGSL>
+        x = m.x;     %#ok<*NASGU>
+        y = m.y;   
+        % z
         t = m.t;
-        Z = z;      %#ok<NASGU>
-        T = m.T;    %#ok<NASGU>
-        indices = m.indices; %#ok<NASGU>
-        numIndex = m.numIndex;
+        Z = z;
+        T = m.T;
 
         % create corresponding mmap info
         mmap = memmapfile(output,...
-            'Format',{'double',[t, numIndex],'bit'}); %#ok<NASGU>
+            'Format',{'double', [t, numIndex],'bit'});
         save(outputInfo, 'mmap', 'x', 'y', 'z', 't', 'Z', 'T', 'indices', 'numIndex');
     end
 end
