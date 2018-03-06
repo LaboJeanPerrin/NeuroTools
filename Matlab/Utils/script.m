@@ -77,10 +77,6 @@ rename(param.date,param.run_number);
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
-% todo 
-
-DFF_bg(Layers,F);
-
 
 %% quickscript
 % this script does everything in one shot
