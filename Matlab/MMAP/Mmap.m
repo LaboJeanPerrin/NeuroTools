@@ -44,7 +44,7 @@ classdef Mmap < handle
                         case 3 % 3D with xy as index
                             zpos = 2; % position of the z coordinate in the subscript
                         otherwise
-                            error('NUMBER OF SUBSCRIPT NOT COMPATIBLE')
+                            error('NUMBER OF SUBSCRIPT NOT COMPATIBLE possible calls : m(x,y,z,t) or m(index,z,t)')
                     end
                     % corrects the z
                     old_z = S.subs{zpos}; % values asked ex layers [4 5 6]
