@@ -47,7 +47,7 @@ classdef Focus < handle
             if ischar(in.Results.run)
                 this.run = in.Results.run;
             else
-                this.run = ['Run_' num2str(in.Results.run, '%02i')];
+                this.run = ['Run ' num2str(in.Results.run, '%02i')];
             end
             this.name = [this.date ' (' this.run ')'];
             
