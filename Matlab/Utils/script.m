@@ -62,9 +62,11 @@ stackViewer2D(F, 'baseline', param.Layers)
 createGrayStack(F)
 stackViewer(F, 'IP/graystack')
 %% compute background
-background = 400;
+param.background = 400;
 %% compute DFF
-dff(F, param.Layers, background);
+t=tic;
+dff(F, param.Layers, param.background);
+toc(t)
 %% view DFF
 sigViewer2D(F, 'dff', param.Layers)
 
