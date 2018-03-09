@@ -1,4 +1,4 @@
-classdef Focus<handle
+classdef Focus < handle
 %Focus Class providing access to NeuroTool datasets
     
     % --- PROPERTIES ------------------------------------------------------
@@ -17,46 +17,56 @@ classdef Focus<handle
         
         sets
         set
+        IP       
         
+% This part is not implemented (TODO)
+%         dx
+%         dy
+%         dt
+%         exposure
     end
     
     % --- METHODS ---------------------------------------------------------
     methods
         
         % _________________________________________________________________
-        function this = Focus(varargin)
+        function this = Focus(args)
         %Focus::constructor
         
             % --- Inputs --------------------------------------------------
             
-            in = ML.Input;
-            in.study = @ischar;
-            in.date = @ischar;
-            in.run = @(x) ischar(x) || isnumeric(x);
-            in.verbose(false) = @islogical;
-            in = +in;
+            in = inputParser;
+            in.addRequired('path', @ischar);
+            in.addRequired('study', @ischar);
+            in.addRequired('date', @ischar);
+            in.addRequired('run', @(x) ischar(x) || isnumeric(x));
+            in.parse(args{:})
                     
             % --- Basic properties ----------------------------------------
+
+            this.study = in.Results.study;
+            this.date = in.Results.date;
             
-            this.study = in.study;
-            this.date = in.date;
-            
-            if ischar(in.run)
-                this.run = in.run;
+            if ischar(in.Results.run)
+                this.run = in.Results.run;
             else
-                this.run = ['Run ' num2str(in.run, '%02i')];
+                this.run = ['Run ' num2str(in.Results.run, '%02i')];
             end
-            this.name = [this.study ' - ' this.date ' (' this.run ')'];
+            
+            this.name = [this.study this.date ' (' this.run ')'];
             
             % --- Directories ---------------------------------------------
         
             % Preparation
-            proj = ML.Projects.select;
             this.dir = struct();
+            
+            this.dir.root = in.Results.path;
             
             % --- Data dir
             
-            this.dir.data = [proj.path 'Data' filesep this.study filesep this.date filesep this.run filesep];
+            sdr = fullfile(this.study, this.date, this.run); % study date run
+            
+            this.dir.data = fullfile(this.dir.root, 'Data', sdr);
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
@@ -65,38 +75,28 @@ classdef Focus<handle
             
             % --- Other folders
             
-            this.dir.images = [this.dir.data 'Images' filesep];
-            this.dir.files = [this.dir.data 'Files' filesep];
-            this.dir.figures = [proj.path 'Figures' filesep];
-            this.dir.movies = [proj.path 'Movies' filesep];
+            this.dir.images = fullfile(this.dir.data, 'Images');
+            this.dir.files = fullfile(this.dir.data, 'Files');
+            this.dir.IP = fullfile(this.dir.files, 'IP');
             
+            % --- create folders if necessary
+            
+            if ~exist(this.dir.files, 'dir')
+                disp('creating ''Files'' directory')
+                mkdir(this.dir.files);
+            end
+
             % --- Parameters ----------------------------------------------
             
-            P = Parameters;
-            P.load([this.dir.data 'Parameters.txt']);
-            
-            kvufile = [this.dir.data 'KVU.txt'];
-            if exist(kvufile, 'file')
-                P.load_KVU(kvufile);
-            end
+            paramPath = fullfile(this.dir.data, 'Parameters.txt');
                         
-            % --- Checks
-                        
-            % Study
-            if ~strcmp(this.study, P.Study)
-                error('Focus:Study', 'Studies do not match. This is a serious problem with the Parameters file.');
+            if ~exist(paramPath, 'file')
+                error('No Parameter file found at \n%s\n', paramPath);
             end
             
-            % Date
-            if ~strcmp(this.date, P.Date)
-                error('Focus:Date', 'Dates do not match. This is a serious problem with the Parameters file.');
-            end
-            
-            % Run
-            if ~strcmp(this.run, P.RunName)
-                error('Focus:Run', 'Run names do not match. This is a serious problem with the Parameters file.');
-            end
-            
+            P = NT.Parameters;
+            P.load(paramPath);
+       
             % Set Parameters
             
             switch P.Version
@@ -134,16 +134,7 @@ classdef Focus<handle
                     this.param.CycleTime = P.CycleTime;
                     this.param.NFrames = P.NFrames;
                     this.param.RunTime = P.RunTime;
-                    
-                    % --- KVU parameters
-                    keys = fieldnames(P.KVU);
-                    for i = 1:numel(keys)
-                        this.param.(keys{i}) = P.KVU.(keys{i});
-                        if isfield(P.Units.KVU, keys{i})
-                            this.units.KVU.(keys{i}) = P.Units.KVU.(keys{i});
-                        end
-                    end
-                    
+                                   
                     % --- Signals
                     this.stim = P.Signals;
                                         
@@ -200,17 +191,9 @@ classdef Focus<handle
             % --- Default set
             this.select(1);
             
-            % --- Current Focus -------------------------------------------
-
-            % --- Define as current focus
-            gname = 'NeuroTools';
-            ML.Session.set(gname, 'Focus', this);
-
-            % --- Verbose
-            if in.verbose
-                ML.CW.print('The current focus is now ~bc[teal]{%s}.\n', this.name);
-            end
-            
+            % --- Config file ---
+            % if there is no config file, create it
+            Routines.Config(this)
         end
     end
     

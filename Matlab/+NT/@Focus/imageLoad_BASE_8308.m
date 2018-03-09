@@ -1,4 +1,4 @@
-function Img = imageLoad(this, n, varargin)
+function Img = iload(this, n, varargin)
 %[Focus].iload Image load
 %   IMG = [Focus].ILOAD(N) Returns image number N.
 %
@@ -20,7 +20,7 @@ in = in.Results;
 
 % =========================================================================
 
-Img = NT.Image(this.imageName(in.n, in.mode));
+Img = Image(this.iname(in.n, in.mode));
 Img.camera = this.IP.camera;
 Img.range = this.IP.range;
 

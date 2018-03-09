@@ -20,7 +20,7 @@ in = in.Results;
 
 % =========================================================================
 
-Img = NT.Image(this.imageName(in.n, in.mode));
+Img = Image(this.imageName(in.n, in.mode));
 Img.camera = this.IP.camera;
 Img.range = this.IP.range;
 

@@ -20,7 +20,11 @@ in = in.Results;
 
 % =========================================================================
 
+<<<<<<< HEAD:Matlab/+NT/@Focus/imageLoad.m
+Img = Image(this.imageName(in.n, in.mode));
+=======
 Img = NT.Image(this.imageName(in.n, in.mode));
+>>>>>>> easyRLS:Matlab/+NT/@Focus/imageLoad.m
 Img.camera = this.IP.camera;
 Img.range = this.IP.range;
 
