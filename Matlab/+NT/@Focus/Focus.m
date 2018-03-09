@@ -4,6 +4,7 @@ classdef Focus < handle
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
         
+        study
         date
         run
         name
@@ -36,12 +37,14 @@ classdef Focus < handle
             
             in = inputParser;
             in.addRequired('path', @ischar);
+            in.addRequired('study', @ischar);
             in.addRequired('date', @ischar);
             in.addRequired('run', @(x) ischar(x) || isnumeric(x));
             in.parse(args{:})
                     
             % --- Basic properties ----------------------------------------
 
+            this.study = in.Results.study;
             this.date = in.Results.date;
             
             if ischar(in.Results.run)
@@ -49,7 +52,8 @@ classdef Focus < handle
             else
                 this.run = ['Run ' num2str(in.Results.run, '%02i')];
             end
-            this.name = [this.date ' (' this.run ')'];
+            
+            this.name = [this.study this.date ' (' this.run ')'];
             
             % --- Directories ---------------------------------------------
         
@@ -60,11 +64,13 @@ classdef Focus < handle
             
             % --- Data dir
             
-            this.dir.data = fullfile(this.dir.root, 'Data', this.date, this.run);
+            sdr = fullfile(this.study, this.date, this.run); % study date run
+            
+            this.dir.data = fullfile(this.dir.root, 'Data', sdr);
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
-                warning('Focus:Data', 'No data found for date=%s and run=%i.', this.date, this.run);
+                warning('Focus:Data', 'No data found for study=%s, date=%s and run=%i.', this.study, this.date, this.run);
             end
             
             % --- Other folders
