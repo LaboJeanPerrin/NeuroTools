@@ -39,78 +39,87 @@ config.units = struct('dx', 'um', ...
 config.exposure = F.param.Exposure;
 config.dt = F.param.Delay; % TODO verify
 
+config.sets = struct();
+config.IP = struct();
+
 config.dx = NaN;
 config.dy = NaN;
 
 % === Getting values ======================================================
 
-% --- Prepare images list
-images = dir(fullfile(F.dir.images, ['*.' ext]));
+if ~exist(F.dir.images, 'dir')
+    warning('config.IP will not be set unless there is an Image directory')
+else
 
-% Get Image Processing parameters
-tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
-config.IP.prefix = tmp{1}{1};
-config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
-config.IP.extension = tmp{1}{3};
+    % --- Prepare images list
+    images = dir(fullfile(F.dir.images, ['*.' ext]));
 
-tmp = imfinfo(fullfile(F.dir.images, images(1).name));
+    % Get Image Processing parameters
+    tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
+    config.IP.prefix = tmp{1}{1};
+    config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
+    config.IP.extension = tmp{1}{3};
 
-config.IP.date = tmp.FileModDate;
-config.IP.width = tmp.Width;
-config.IP.height = tmp.Height;
-config.IP.bitdepth = tmp.BitDepth;
-config.IP.class = ['uint' num2str(tmp.BitDepth)];
-if ~isfield(tmp,'Software'), tmp.Software = 'PCO_ExCv';end
+    tmp = imfinfo(fullfile(F.dir.images, images(1).name));
 
-switch tmp.Software
-    case 'PCO_ExCv'
-        config.dx = 0.8;           % Voxel width (um)
-        config.dy = 0.8;           % Voxel height (um)
-        config.IP.camera = 'PCO.Edge';
-    case 'National Instruments IMAQ   '
-        config.dx = 0.66;           % Voxel width (um)
-        config.dy = 0.66;           % Voxel height (um)
-        config.IP.camera = 'Andor_iXon';
-    otherwise
-        config.IP.camera = 'default';
-end
+    config.IP.date = tmp.FileModDate;
+    config.IP.width = tmp.Width;
+    config.IP.height = tmp.Height;
+    config.IP.bitdepth = tmp.BitDepth;
+    config.IP.class = ['uint' num2str(tmp.BitDepth)];
+    if ~isfield(tmp,'Software'), tmp.Software = 'PCO_ExCv';end
 
-tmp = NT.Image(fullfile(F.dir.images, images(round(numel(images)/2)).name));
-config.IP.range = tmp.autorange;
+    switch tmp.Software
+        case 'PCO_ExCv'
+            config.dx = 0.8;           % Voxel width (um)
+            config.dy = 0.8;           % Voxel height (um)
+            config.IP.camera = 'PCO.Edge';
+        case 'National Instruments IMAQ   '
+            config.dx = 0.66;           % Voxel width (um)
+            config.dy = 0.66;           % Voxel height (um)
+            config.IP.camera = 'Andor_iXon';
+        otherwise
+            config.IP.camera = 'default';
+    end
 
-% Define sets
-config.sets = struct('id', {}, 'type', {}, 'frames', {}, 't', {}, 'z', {});
+    tmp = NT.Image(fullfile(F.dir.images, images(round(numel(images)/2)).name));
+    config.IP.range = tmp.autorange;
 
-  % Get existing frames
-frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x,...
-    ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
-          
-% --- automatic layers, linear
+    % Define sets
+    config.sets = struct('id', {}, 'type', {}, 'frames', {}, 't', {}, 'z', {});
 
-% Number of layers
-    nL = F.param.NLayers;
+      % Get existing frames
+    frames = cellfun(@(x) str2double(x{1}), cellfun(@(x) regexp(x,...
+        ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
+  
+    % --- automatic layers, linear
 
-% Altitudes TODO verify
-    dz = F.param.Increment;
+    % Number of layers
+        nL = F.param.NLayers;
 
-for i = 1:nL
+    % Altitudes TODO verify
+        dz = F.param.Increment;
 
-    id = numel(config.sets)+1;
-    config.sets(id).id = id;
+    for i = 1:nL
 
-    % Type
-    config.sets(id).type = 'Layer';
+        id = numel(config.sets)+1;
+        config.sets(id).id = id;
 
-    % Index
-    config.sets(id).frames = frames(i:nL:end);
+        % Type
+        config.sets(id).type = 'Layer';
 
-    % Times
-    config.sets(id).t = config.sets(id).frames*config.dt;
+        % Index
+        config.sets(id).frames = frames(i:nL:end);
 
-    % Altitudes
-    config.sets(id).z = dz*(i-1);
+        % Times
+        config.sets(id).t = config.sets(id).frames*config.dt;
 
-end
+        % Altitudes
+        config.sets(id).z = dz*(i-1);
+
+    end
+      
+end  
 
 % --- Save configuration
 

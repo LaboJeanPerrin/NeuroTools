@@ -161,6 +161,9 @@ classdef Focus < handle
                     this.frames.BitDepth = Img.BitDepth;
                     
                 end
+                
+            else
+                warning('Focus.frames will not be set without Image directory')
             end
             
             % --- Sets ----------------------------------------------------
