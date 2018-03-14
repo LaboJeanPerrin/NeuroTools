@@ -54,7 +54,7 @@ classdef Focus < handle
                 this.run = ['Run ' num2str(in.Results.run, '%02i')];
             end
             
-            this.name = [this.study this.date ' (' this.run ')'];
+            this.name = [this.study ' ' this.date ' (' this.run ')'];
             
             % --- Directories ---------------------------------------------
         
