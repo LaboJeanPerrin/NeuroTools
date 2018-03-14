@@ -236,7 +236,7 @@ classdef Focus < handle
             
             % --- Config file ---
             % if there is no config file, create it
-            Routines.Config(this)
+            NT.Config(this)
         end
     end
     
