@@ -99,9 +99,11 @@ classdef Focus < handle
        
             % Set Parameters
             
+            % P.Version corresponds to the Lightsheet program version ?
+            % (not the parameter file version)
             switch P.Version
             
-                case '4.1'
+                case '4.1' || '4.2'
                 
                     % --- Units
                     this.units = P.Units;
