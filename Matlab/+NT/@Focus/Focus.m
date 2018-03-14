@@ -32,14 +32,15 @@ classdef Focus < handle
         % _________________________________________________________________
         function this = Focus(args)
         %Focus::constructor
+        % call focus with NT.Focus({path, study, date, run})
         
             % --- Inputs --------------------------------------------------
             
             in = inputParser;
-            in.addRequired('path', @ischar);
-            in.addRequired('study', @ischar);
-            in.addRequired('date', @ischar);
-            in.addRequired('run', @(x) ischar(x) || isnumeric(x));
+            in.addRequired('path', @ischar);    % root folder
+            in.addRequired('study', @ischar);   % name of study (if '', ignored)
+            in.addRequired('date', @ischar);    % date of experiment yyyy-mm-dd
+            in.addRequired('run', @(x) ischar(x) || isnumeric(x)); % run number
             in.parse(args{:})
                     
             % --- Basic properties ----------------------------------------
