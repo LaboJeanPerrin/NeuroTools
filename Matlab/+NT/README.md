@@ -4,7 +4,7 @@ Neurotools contains several classes as @Focus, @Parameters, @Image...
 
 ## Using Neurotools for data analysis
 
-The Focus class helps you access your files during analysis if you respect the standard folder architecture : Data/Study/yyy-mm-dd/Run 01/Parameters.txt. A lot of functions in 'easyRLS' will require a valid focus as their first argument. It will let them know where to find files and where to record files.
+The Focus class helps you access your files during analysis if you respect the standard folder architecture : 'Data/Study/yyy-mm-dd/Run 01/Parameters.txt'. A lot of functions in 'easyRLS' will require a valid focus as their first argument. It will let them know where to find files and where to record files.
  
 To create a focus during analysis, simply instanciate the class :
 
