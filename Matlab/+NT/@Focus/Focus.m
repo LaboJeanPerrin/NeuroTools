@@ -100,11 +100,12 @@ classdef Focus < handle
        
             % Set Parameters
             
-            % P.Version corresponds to the Lightsheet program version ?
+            % P.Version corresponds to the Lightsheet program version
             % (not the parameter file version)
+            % the switch could be done on the parameter file version
             switch P.Version
             
-                case '4.1'
+                case {'4.1', '4.2'}
                 
                     % --- Units
                     this.units = P.Units;
@@ -141,43 +142,6 @@ classdef Focus < handle
                     % --- Signals
                     this.stim = P.Signals;
                     
-                case '4.2'
-                    
-                    % --- Units
-                    this.units = P.Units;
-                    
-                    % --- Parameters
-                    this.param = struct();
-                    this.param.LigthSheet_Version = P.Version;
-                    this.param.Description = P.Description;
-                    this.param.CameraModel = P.CameraModel;
-                    this.param.FluoMode = P.FluoMode;
-                    this.param.HM_Position_min = P.HM_Position_min;
-                    this.param.HM_Position_max = P.HM_Position_max;
-                    this.param.HM_um2V = P.HM_um2V;
-                    this.param.VM_Position = P.VM_Position;
-                    this.param.VM_um2V = P.VM_um2V;
-                    this.param.OP_Position = P.OP_Position;
-                    this.param.OP_um2V = P.OP_um2V;
-                    this.param.HM_Mode = P.HM_Mode;
-                    this.param.HM_Shape = P.HM_Shape;
-                    this.param.HM_Rate = P.HM_Rate;
-                    this.param.NLayers = P.NLayers;
-                    this.param.Exposure = P.Exposure;
-                    this.param.Delay = P.Delay;
-                    this.param.DelayLong = P.DelayLong;
-                    this.param.StepsShape = P.StepsShape;
-                    this.param.Increment = P.Increment;
-                    this.param.StabShape = P.StabShape;
-                    this.param.StabRatio = P.StabRatio;
-                    this.param.NCycles = P.NCycles;
-                    this.param.CycleTime = P.CycleTime;
-                    this.param.NFrames = P.NFrames;
-                    this.param.RunTime = P.RunTime;
-                                   
-                    % --- Signals
-                    this.stim = P.Signals;
-                                        
                 otherwise
                     warning('Focus:Parameters', 'Couldn''t read this version of the Parameters file.');
             end
