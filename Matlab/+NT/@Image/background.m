@@ -10,7 +10,7 @@ function [B, S] = background(this)
 % --- Cumulated PDF
 [f, bin] = ecdf(this.pix(:));
 
-plot(bin, f)
+% plot(bin, f)
 % 
 % keyboard
 
