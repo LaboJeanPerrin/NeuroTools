@@ -71,7 +71,7 @@ classdef Focus < handle
             
             % Check existence
             if ~exist(this.dir.data, 'dir')
-                warning('Focus:Data', 'No data found for study=%s, date=%s and run=%i.', this.study, this.date, this.run);
+                error('No data found in %s', this.dir.data);
             end
             
             % --- Other folders
