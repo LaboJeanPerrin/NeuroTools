@@ -20,10 +20,11 @@ classdef Focus < handle
         IP       
         
 % This part is not implemented (TODO)
-%         dx
+%         dx            % find in TIF
 %         dy
-%         dt
-%         exposure
+%         binning
+        dt % currently, dt = delay + exposure (ignoring delay long)
+%         exposure      % already in param
     end
     
     % --- METHODS ---------------------------------------------------------

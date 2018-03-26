@@ -37,7 +37,8 @@ config.units = struct('dx', 'um', ...
     'exposure', 'ms');
 
 config.exposure = F.param.Exposure;
-config.dt = F.param.Delay; % TODO verify
+config.dt = F.param.Delay  + F.param.Exposure ;
+% dt is the sum of the delay and the exposure (ignoring delay long)
 
 config.sets = struct();
 config.IP = struct();
@@ -136,6 +137,7 @@ function configToFocus(config, F)
     F.units = config.units;
     F.sets = config.sets;
     F.IP = config.IP;
+    F.dt = config.dt;
 
-    % TODO other elements
+    % TODO other elements (like dx, dy)
 end
