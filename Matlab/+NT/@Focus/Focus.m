@@ -31,28 +31,24 @@ classdef Focus < handle
     methods
         
         % _________________________________________________________________
-        function this = Focus(args)
+        function this = Focus(path, study, date, run)
         %Focus::constructor
-        % call focus with NT.Focus({path, study, date, run})
+        % call focus with NT.Focus(path, study, date, run)
         
-            % --- Inputs --------------------------------------------------
-            
-            in = inputParser;
-            in.addRequired('path', @ischar);    % root folder
-            in.addRequired('study', @ischar);   % name of study (if '', ignored)
-            in.addRequired('date', @ischar);    % date of experiment yyyy-mm-dd
-            in.addRequired('run', @(x) ischar(x) || isnumeric(x)); % run number
-            in.parse(args{:})
+        % path:     root folder
+        % study:    name of study (if '', ignored)
+        % date:     date of experiment yyyy-mm-dd
+        % run:      run number
                     
             % --- Basic properties ----------------------------------------
 
-            this.study = in.Results.study;
-            this.date = in.Results.date;
+            this.study = study;
+            this.date = date;
             
-            if ischar(in.Results.run)
-                this.run = in.Results.run;
+            if ischar(run)
+                this.run = run;
             else
-                this.run = ['Run ' num2str(in.Results.run, '%02i')];
+                this.run = ['Run ' num2str(run, '%02i')];
             end
             
             this.name = [this.study ' ' this.date ' (' this.run ')'];
@@ -62,7 +58,7 @@ classdef Focus < handle
             % Preparation
             this.dir = struct();
             
-            this.dir.root = in.Results.path;
+            this.dir.root = path;
             
             % --- Data dir
             
