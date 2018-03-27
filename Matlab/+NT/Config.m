@@ -2,7 +2,6 @@ function Config(F)
 %Routines.Config Configuration routine.
 %   ROUTINES.CONFIG(F) creates a config file for RUN at DATE defined in F
 
-
 % rewrite function Hugo Trentesaux
 
 % === Parameters ==========================================================
@@ -49,9 +48,34 @@ config.dy = NaN;
 % === Getting values ======================================================
 
 if ~exist(F.dir.images, 'dir')
-    warning('config.IP will not be set unless there is an Image directory')
+    warning('config.IP will not be set correctly unless there is an Image directory')
+    
+    % tries to find an image
+    image = dir(fullfile(F.dir.data, '*.tif'));
+    if numel(image) % if there is at least one image 
+        info = imfinfo(fullfile(image(1).folder, image(1).name));
+        config.IP.width = info.Width;
+        config.IP.height = info.Height;
+        config.IP.bitdepth = info.BitDepth;
+        config.IP.date = info.FileModDate;
+        config.IP.INFO = 'found by focus config on a sample tif image';
+        config.IP.description = info.ImageDescription;
+        % parse description
+        parsed = parseDescription(info.ImageDescription);
+        config.IP.Software = parsed.Software; 
+        config.IP.Binning = parsed.Binning;
+        fprintf('found width (%d) and height (%d) in %s\n', info.Width, info.Height, image(1).name);
+        
+        switch config.IP.Software
+            case 'Hamamatsu'
+                config.dx = 0.4; %µm
+                config.dy = 0.4; %µm
+        end
+        config.dx = config.dx * config.IP.Binning;
+        config.dy = config.dy * config.IP.Binning;
+    end
+    
 else
-
     % --- Prepare images list
     images = dir(fullfile(F.dir.images, ['*.' ext]));
 
@@ -132,12 +156,32 @@ disp('Config file saved.')
 end
 
 function configToFocus(config, F)
+% loads the elements of 'config' to the focus
 
     % save config elements to focus
     F.units = config.units;
     F.sets = config.sets;
     F.IP = config.IP;
     F.dt = config.dt;
+    F.dx = config.dx;
+    F.dy = config.dy;
 
     % TODO other elements (like dx, dy)
+end
+
+function parsed = parseDescription(descr)
+% parse the given description to find hamamatsu parameters
+
+    parsed = struct(...
+        'Software', '',...
+        'Binning', 1);
+    
+    if contains(descr, 'Hamamatsu')
+        parsed.Software = 'Hamamatsu';
+    end
+    
+    p = strfind(descr, 'Binning = ');
+    b = descr(p+10);
+    parsed.Binning = str2double(b);
+
 end
