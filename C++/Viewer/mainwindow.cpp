@@ -2,11 +2,6 @@
 #include "ui_mainwindow.h"
 
 /*
- * General
- *  - Gérer plusieurs canaux de données, avec ouverture sur besoin et monitoring
- *  - Lancement depuis Matlab
- *  - Test autres ordis
- *
  * Vue 3D
  *  - Mise au point
  *  - Gérer le zoom
@@ -25,6 +20,9 @@
  *  - Gérer les overlays
  *  - Gérer les données vectorielles
  *  - Gérer la selection
+ *
+ *  * General
+ *  - Lancement depuis Matlab: supprimer la console à la fermeture
  *
  * */
 

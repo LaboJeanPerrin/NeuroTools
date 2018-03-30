@@ -30,9 +30,14 @@ classdef Viewer < handle
         function this = Viewer(varargin)
         % NT.Viewer Constructor
             
-            % --- Connections ---------------------------------------------
+            % --- Viewer --------------------------------------------------
             
-            % --- Instructions
+%             fname = mfilename('fullpath');
+%             s = strsplit(fname, filesep)
+%             system(['gnome-terminal -e "bash -c \"cd /' fullfile(s{1:end-4}, 'C++', 'Viewer') ' && echo ljp3231 | sudo -S ./Viewer; exec bash\""']);
+%             pause(0.5)
+            
+            % --- Command connection --------------------------------------
             
             this.Conn.Commands = tcpip('localhost', this.port);
             set(this.Conn.Commands, 'BytesAvailableFcnMode', 'terminator');
@@ -52,6 +57,7 @@ classdef Viewer < handle
             this.Conn.Data = struct('conn', {}, 'available', {});
             
             % --- Datasets ------------------------------------------------
+            
             this.dataSet = struct('name', {}, 'type', {}, 'X', {}, 'Y', {}, 'Z', {}, ...
                 'data', {}, 'faces', {}, 'transform', {}, 'cmap', {}, 'visible', {}, 'frozen', {}, ...
                 'x2um', {}, 'y2um', {}, 'z2um', {}, 'T', {}, 't', {}, 't2s', {});
@@ -63,7 +69,9 @@ classdef Viewer < handle
         % NT.Viewer destructor
         
             fclose(this.Conn.Commands);
-%             fclose(this.Conn.Data);
+            for i = 1:numel(this.Conn.Data)
+                fclose(this.Conn.Data(i).conn);
+            end
             
         end
         
