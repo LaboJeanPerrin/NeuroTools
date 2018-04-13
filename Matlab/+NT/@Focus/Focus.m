@@ -75,6 +75,8 @@ classdef Focus < handle
             this.dir.images = fullfile(this.dir.data, 'Images');
             this.dir.files = fullfile(this.dir.data, 'Files');
             this.dir.IP = fullfile(this.dir.files, 'IP');
+            this.dir.Stimulus = fullfile(this.dir.data, 'Stimulus');
+            this.dir.RefBrain = fullfile(this.dir.data, 'RefBrain');
             
             % --- create folders if necessary
             
