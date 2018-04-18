@@ -45,6 +45,27 @@ config.IP = struct();
 config.dx = NaN;
 config.dy = NaN;
 
+config.version = struct();
+
+% === Getting version =====================================================
+
+try
+    cd(fullfile(F.dir.root, 'Programs/easyRLS'))
+    [status, cmdout] = unix('git describe --tags');
+    if status; warning('unable to get program version');
+    else; config.version.easyRLS = cmdout(1:end-1); end
+catch me
+    warning(me.identifier, 'can not find easyRLS code\n%s', me.message)
+end
+try
+    cd(fullfile(F.dir.root, 'Programs/NeuroTools'))
+    [status, cmdout] = unix('git describe --tags');
+if status; warning('unable to get program version');
+else; config.version.NeuroTools = cmdout(1:end-1); end
+catch me
+    warning(me.identifier, 'can not find NeuroTools code\n%s', me.message)
+end
+
 % === Getting values ======================================================
 
 if ~exist(F.dir.images, 'dir')
