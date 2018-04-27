@@ -47,23 +47,14 @@ config.dy = NaN;
 
 config.version = struct();
 
-% === Getting version =====================================================
+% === Recording code version ==============================================
 
-try
-    cd(fullfile(F.dir.root, 'Programs/easyRLS'))
-    [status, cmdout] = unix('git describe --tags');
-    if status; warning('unable to get program version');
-    else; config.version.easyRLS = cmdout(1:end-1); end
-catch me
-    warning(me.identifier, 'can not find easyRLS code\n%s', me.message)
-end
-try
-    cd(fullfile(F.dir.root, 'Programs/NeuroTools'))
-    [status, cmdout] = unix('git describe --tags');
-if status; warning('unable to get program version');
-else; config.version.NeuroTools = cmdout(1:end-1); end
-catch me
-    warning(me.identifier, 'can not find NeuroTools code\n%s', me.message)
+for proj = {'easyRLS', 'NeuroTools'}
+    try
+        config.version.(proj{1}) = codeVersion(proj{1});
+    catch me
+        warning(me.identifier, 'can not find %s code in default directory\n%s', proj{1}, me.message)
+    end
 end
 
 % === Getting values ======================================================
@@ -186,8 +177,16 @@ function configToFocus(config, F)
     F.dt = config.dt;
     F.dx = config.dx;
     F.dy = config.dy;
-
     % TODO other elements (like dx, dy)
+    
+    %version check
+    projs = fieldnames(config.version);
+    versions = struct2cell(config.version);
+    for i = 1:2
+        if ~strcmp(versions{i}, codeVersion(projs{i}))            
+            warning('code version for %s do not match\ntheir might be some incompatibilities', projs{i});
+        end
+    end
 end
 
 function parsed = parseDescription(descr)
@@ -206,3 +205,18 @@ function parsed = parseDescription(descr)
     parsed.Binning = str2double(b);
 
 end
+
+function version = codeVersion(proj)
+% return the git name of the commit
+
+    focusPath = mfilename('fullpath');
+    toErase = 'NeuroTools/Matlab/+NT/Config';
+    programPath = erase(focusPath,toErase);
+    path = fullfile(programPath, proj);
+    cd(path);
+    [status, cmdout] = unix('git describe --tags');
+    if status; warning('unable to get program version');
+    else; version = cmdout(1:end-1); end
+    
+end
+    
