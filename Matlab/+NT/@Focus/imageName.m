@@ -35,4 +35,4 @@ switch in.mode
         in.n = this.set.frames(in.n);
 end
 
-out = fullfile(this.dir.images, [this.IP.prefix num2str(in.n, this.IP.format) '.' this.IP.extension]);
+out = fullfile(this.dir('Images'), [this.IP.prefix num2str(in.n, this.IP.format) '.' this.IP.extension]);
