@@ -182,7 +182,7 @@ function configToFocus(config, F)
     versions = struct2cell(config.version);
     for i = 1:2
         if ~strcmp(versions{i}, codeVersion(projs{i}))            
-            warning('code version for %s do not match\nthere might be some incompatibilities', projs{i});
+            warning('code version for %s do not match\nconfig: %s, current: %s', projs{i}, versions{i}, codeVersion(projs{i}));
         end
     end
 end
