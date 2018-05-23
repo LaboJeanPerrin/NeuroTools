@@ -4,11 +4,11 @@ classdef Focus < handle
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
         
+        rootdir
         study
         date
         run
         name
-        dir
         
         param
         frames
@@ -24,6 +24,11 @@ classdef Focus < handle
         dy
         dt % currently, dt = delay + exposure (ignoring delay long)
 %         binning
+    end
+    
+    properties (Hidden)
+        dir
+        tag
     end
     
     % --- METHODS ---------------------------------------------------------
@@ -55,39 +60,71 @@ classdef Focus < handle
             % --- Directories ---------------------------------------------
         
             % Preparation
-            this.dir = struct();
-            
-            this.dir.root = path;
+            this.rootdir = path;
             
             % --- Data dir
             
             sdr = fullfile(this.study, this.date, this.run); % study date run
             
-            this.dir.data = fullfile(this.dir.root, 'Data', sdr);
+            % --- Architecture
+            
+            dirs = containers.Map; % directories
+            tags = containers.Map; % tags
+
+            dirs('Run') = fullfile(this.rootdir, 'Data', sdr);
+                tags('Config') = fullfile(dirs('Run'), 'Config.mat');
+                dirs('Images')      = fullfile(dirs('Run'), 'Images');
+                dirs('Behaviour')   = fullfile(dirs('Run'), 'Behaviour');
+                dirs('Stimulus')    = fullfile(dirs('Run'), 'Stimulus');
+                dirs('Analysis')    = fullfile(dirs('Run'), 'Analysis');
+                    % stacks
+                    dirs('graystack')     = fullfile(dirs('Analysis'), 'graystack.stack');
+                        tags('graystack')     = fullfile(dirs('graystack'), 'graystack');
+                    dirs('refStack')     = fullfile(dirs('Analysis'), 'refStack.stack');
+                        tags('refStack')      = fullfile(dirs('refStack'), 'refStack');
+                    dirs('rawRAS')        = fullfile(dirs('Analysis'), 'rawRAS.stack');
+                        tags('rawRAS')        = fullfile(dirs('rawRAS'), 'rawRAS');
+                    dirs('corrected')     = fullfile(dirs('Analysis'), 'corrected.stack');
+                        tags('corrected')     = fullfile(dirs('corrected'), 'corrected');
+                    % folders
+                    dirs('Background')    = fullfile(dirs('Analysis'), 'Background');
+                        tags('background')     = fullfile(dirs('Background'), 'background.mat');
+                    dirs('Drift')         = fullfile(dirs('Analysis'), 'Drift');
+                    dirs('Mask')          = fullfile(dirs('Analysis'), 'Mask');
+                        tags('mask')          = fullfile(dirs('Mask'), 'mask.mat');
+                    dirs('Registration')  = fullfile(dirs('Analysis'), 'Registration');
+                        dirs('RefBrain')      = fullfile(dirs('Registration'), 'RefBrain');
+                            tags('RefBrain')      = fullfile(dirs('RefBrain'), 'RefBrain.nhdr');
+                    dirs('Regression')    = fullfile(dirs('Analysis'), 'Regression');
+                    dirs('PhaseMap')      = fullfile(dirs('Analysis'), 'PhaseMap');
+                    dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
+                    dirs('Baseline')      = fullfile(dirs('Analysis'), 'Baseline');
+                        dirs('BaselineNeuron') = fullfile(dirs('Baseline'), 'neuron');
+                        dirs('BaselinePixel')  = fullfile(dirs('Baseline'), 'pixel');
+                    dirs('DFF')           = fullfile(dirs('Analysis'), 'DFF');
+                        dirs('DFFNeuron')      = fullfile(dirs('DFF'), 'neuron');
+                        dirs('DFFPixel')       = fullfile(dirs('DFF'), 'pixel');
+                    dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
+                dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
+                    
+            this.dir = dirs;
+            this.tag = tags;
             
             % Check existence
-            if ~exist(this.dir.data, 'dir')
-                error('No data found in %s', this.dir.data);
+            if ~exist(this.dir('Run'), 'dir')
+                error('No data found in %s', this.dirs('Run'));
             end
             
-            % --- Other folders
-            
-            this.dir.images = fullfile(this.dir.data, 'Images');
-            this.dir.files = fullfile(this.dir.data, 'Files');
-            this.dir.IP = fullfile(this.dir.files, 'IP');
-            this.dir.Stimulus = fullfile(this.dir.data, 'Stimulus');
-            this.dir.RefBrain = fullfile(this.dir.data, 'RefBrain');
-            
             % --- create folders if necessary
-            
-            if ~exist(this.dir.files, 'dir')
-                disp('creating ''Files'' directory')
-                mkdir(this.dir.files);
+           
+            if ~exist(this.dir('Analysis'), 'dir')
+                disp('creating ''Analysis'' directory')
+                mkdir(this.dir('Analysis'));
             end
 
             % --- Parameters ----------------------------------------------
             
-            paramPath = fullfile(this.dir.data, 'Parameters.txt');
+            paramPath = fullfile(this.dir('Run'), 'Parameters.txt');
                         
             if ~exist(paramPath, 'file')
                 error('No Parameter file found at \n%s\n', paramPath);
@@ -145,13 +182,13 @@ classdef Focus < handle
             end
             
             % --- Frame information
-            if exist(this.dir.images, 'dir')
+            if exist(this.dir('Images'), 'dir')
                 
-                Images = dir([this.dir.images '*.tif']);
+                Images = dir([this.dir('Images') '*.tif']);
                 if numel(Images)
                     
                     tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
-                    Img = imfinfo([this.dir.images Images(1).name]);
+                    Img = imfinfo([this.dir('Images') Images(1).name]);
                     
                     this.frames = struct();
                     this.frames.Number = numel(Images);

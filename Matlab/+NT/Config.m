@@ -6,11 +6,9 @@ function Config(F)
 
 % === Parameters ==========================================================
 
-% tag = 'Config';
-tag = 'Config.mat';
 ext = 'tif';
 
-confPath = fullfile(F.dir.files, tag);
+confPath = F.tag('Config');
 
 % look for config file and continue only if ther isn't
 if exist(confPath, 'file')
@@ -19,7 +17,7 @@ if exist(confPath, 'file')
     % save config elements to focus
     configToFocus(config, F) %#ok<NODEF>
     
-    disp('Config.m loaded');
+    disp('Config loaded');
     return
 end
 
@@ -59,11 +57,11 @@ end
 
 % === Getting values ======================================================
 
-if ~exist(F.dir.images, 'dir')
+if ~exist(F.dir('Images'), 'dir')
     warning('config.IP will not be set correctly unless there is an Image directory')
     
-    % tries to find an image
-    image = dir(fullfile(F.dir.data, '*.tif'));
+    % tries to find at least one image for dcimg parameters
+    image = dir(fullfile(F.dir('Images'), '*.tif'));
     if numel(image) % if there is at least one image 
         info = imfinfo(fullfile(image(1).folder, image(1).name));
         config.IP.width = info.Width;
@@ -89,7 +87,7 @@ if ~exist(F.dir.images, 'dir')
     
 else
     % --- Prepare images list
-    images = dir(fullfile(F.dir.images, ['*.' ext]));
+    images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
     % Get Image Processing parameters
     tmp = regexp(images(1).name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
@@ -97,7 +95,7 @@ else
     config.IP.format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
     config.IP.extension = tmp{1}{3};
 
-    tmp = imfinfo(fullfile(F.dir.images, images(1).name));
+    tmp = imfinfo(fullfile(F.dir('Images'), images(1).name));
 
     config.IP.date = tmp.FileModDate;
     config.IP.width = tmp.Width;
@@ -119,7 +117,7 @@ else
             config.IP.camera = 'default';
     end
 
-    tmp = NT.Image(fullfile(F.dir.images, images(round(numel(images)/2)).name));
+    tmp = NT.Image(fullfile(F.dir('Images'), images(round(numel(images)/2)).name));
     config.IP.range = tmp.autorange;
 
     % Define sets
