@@ -24,6 +24,9 @@ classdef Focus < handle
         dy
         dt % currently, dt = delay + exposure (ignoring delay long)
 %         binning
+
+% empty structure to store analysis parameters
+        Analysis
     end
     
     properties (Hidden)
@@ -56,6 +59,8 @@ classdef Focus < handle
             end
             
             this.name = [this.study ' ' this.date ' (' this.run ')'];
+            
+            this.Analysis = struct(); % empty structure to store analysis parameters
             
             % --- Directories ---------------------------------------------
         
