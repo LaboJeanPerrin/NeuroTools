@@ -79,6 +79,7 @@ classdef Focus < handle
             dirs('Run') = fullfile(this.rootdir, 'Data', sdr);
                 tags('Config') = fullfile(dirs('Run'), 'Config.mat');
                 dirs('Images')      = fullfile(dirs('Run'), 'Images');
+                    tags('dcimg')     = fullfile(dirs('Images'), 'stack');
                 dirs('Behaviour')   = fullfile(dirs('Run'), 'Behaviour');
                 dirs('Stimulus')    = fullfile(dirs('Run'), 'Stimulus');
                 dirs('Analysis')    = fullfile(dirs('Run'), 'Analysis');
@@ -117,7 +118,7 @@ classdef Focus < handle
             
             % Check existence
             if ~exist(this.dir('Run'), 'dir')
-                error('No data found in %s', this.dirs('Run'));
+                error('No data found in %s', this.dir('Run'));
             end
             
             % --- create folders if necessary

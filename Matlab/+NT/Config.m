@@ -57,8 +57,11 @@ end
 
 % === Getting values ======================================================
 
-if ~exist(F.dir('Images'), 'dir')
-    warning('config.IP will not be set correctly unless there is an Image directory')
+if ~exist(F.dir('Images'), 'dir') % if no image directory
+    error('no Image directory in %s', F.dir('Images'));
+elseif ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
+    disp('found dcimg, working with it');
+    warning('config.IP will not be set correctly unless there is an Image directory');
     
     % tries to find at least one image for dcimg parameters
     image = dir(fullfile(F.dir('Images'), '*.tif'));
@@ -85,7 +88,7 @@ if ~exist(F.dir('Images'), 'dir')
         config.dy = config.dy * config.IP.Binning;
     end
     
-else
+else % no dcimg, must be tif
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
@@ -180,10 +183,14 @@ function configToFocus(config, F)
     %version check
     projs = fieldnames(config.version);
     versions = struct2cell(config.version);
-    for i = 1:2
-        if ~strcmp(versions{i}, codeVersion(projs{i}))            
-            warning('code version for %s do not match\nconfig: %s, current: %s', projs{i}, versions{i}, codeVersion(projs{i}));
+    try
+        for i = 1:2
+            if ~strcmp(versions{i}, codeVersion(projs{i}))            
+                warning('code version for %s do not match\nconfig: %s, current: %s', projs{i}, versions{i}, codeVersion(projs{i}));
+            end
         end
+    catch
+       warning('impossible to check code version on windows') 
     end
 end
 
@@ -208,7 +215,7 @@ function version = codeVersion(proj)
 % return the git name of the commit
 
     focusPath = mfilename('fullpath');
-    toErase = 'NeuroTools/Matlab/+NT/Config';
+    toErase = fullfile('NeuroTools','Matlab','+NT','Config');
     programPath = erase(focusPath,toErase);
     path = fullfile(programPath, proj);
     cd(path);
