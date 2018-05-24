@@ -110,7 +110,7 @@ classdef Focus < handle
                         dirs('phase')     = fullfile(dirs('PhaseMap'), 'phase.stack');
                             tags('phase')     = fullfile(dirs('phase'), 'phase');
                         dirs('realpart')     = fullfile(dirs('PhaseMap'), 'realpart.stack');
-                            tags('realpart')     = fullfile(dirs('real'), 'realpart');
+                            tags('realpart')     = fullfile(dirs('realpart'), 'realpart');
                         dirs('imaginary')     = fullfile(dirs('PhaseMap'), 'imaginary.stack');
                             tags('imaginary')     = fullfile(dirs('imaginary'), 'imaginary');
                     dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
@@ -151,7 +151,7 @@ classdef Focus < handle
             end
             
             P = NT.Parameters;
-            P.load(paramPath);
+            P.load(this.tag('Parameters'));
        
             % Set Parameters
             
