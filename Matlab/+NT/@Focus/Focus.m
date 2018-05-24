@@ -102,6 +102,14 @@ classdef Focus < handle
                             tags('RefBrain')      = fullfile(dirs('RefBrain'), 'RefBrain.nhdr');
                     dirs('Regression')    = fullfile(dirs('Analysis'), 'Regression');
                     dirs('PhaseMap')      = fullfile(dirs('Analysis'), 'PhaseMap');
+                        dirs('amplitude')     = fullfile(dirs('PhaseMap'), 'amplitude.stack');
+                            tags('amplitude')     = fullfile(dirs('amplitude'), 'amplitude');
+                        dirs('phase')     = fullfile(dirs('PhaseMap'), 'phase.stack');
+                            tags('phase')     = fullfile(dirs('phase'), 'phase');
+                        dirs('real')     = fullfile(dirs('PhaseMap'), 'real.stack');
+                            tags('real')     = fullfile(dirs('real'), 'real');
+                        dirs('imaginary')     = fullfile(dirs('PhaseMap'), 'imaginary.stack');
+                            tags('imaginary')     = fullfile(dirs('imaginary'), 'imaginary');
                     dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
                     dirs('Baseline')      = fullfile(dirs('Analysis'), 'Baseline');
                         dirs('BaselineNeuron') = fullfile(dirs('Baseline'), 'neuron');
