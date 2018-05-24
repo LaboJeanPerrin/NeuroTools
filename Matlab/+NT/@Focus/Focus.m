@@ -109,6 +109,8 @@ classdef Focus < handle
                             tags('amplitude')     = fullfile(dirs('amplitude'), 'amplitude');
                         dirs('phase')     = fullfile(dirs('PhaseMap'), 'phase.stack');
                             tags('phase')     = fullfile(dirs('phase'), 'phase');
+                        dirs('deltaphi')     = fullfile(dirs('PhaseMap'), 'deltaphi.stack');
+                            tags('deltaphi')     = fullfile(dirs('deltaphi'), 'deltaphi');
                         dirs('realpart')     = fullfile(dirs('PhaseMap'), 'realpart.stack');
                             tags('realpart')     = fullfile(dirs('realpart'), 'realpart');
                         dirs('imaginary')     = fullfile(dirs('PhaseMap'), 'imaginary.stack');
