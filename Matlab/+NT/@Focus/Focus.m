@@ -76,10 +76,12 @@ classdef Focus < handle
             dirs = containers.Map; % directories
             tags = containers.Map; % tags
 
+            % Run folder
             dirs('Run') = fullfile(this.rootdir, 'Data', sdr);
-                tags('Config') = fullfile(dirs('Run'), 'Config.mat');
+                tags('Config')      = fullfile(dirs('Run'), 'Config.mat');
+                tags('Parameters')  = fullfile(dirs('Run'), 'Parameters.txt');
                 dirs('Images')      = fullfile(dirs('Run'), 'Images');
-                    tags('dcimg')     = fullfile(dirs('Images'), 'stack');
+                    tags('dcimg')       = fullfile(dirs('Images'), 'stack');
                 dirs('Behaviour')   = fullfile(dirs('Run'), 'Behaviour');
                 dirs('Stimulus')    = fullfile(dirs('Run'), 'Stimulus');
                 dirs('Analysis')    = fullfile(dirs('Run'), 'Analysis');
@@ -107,8 +109,8 @@ classdef Focus < handle
                             tags('amplitude')     = fullfile(dirs('amplitude'), 'amplitude');
                         dirs('phase')     = fullfile(dirs('PhaseMap'), 'phase.stack');
                             tags('phase')     = fullfile(dirs('phase'), 'phase');
-                        dirs('real')     = fullfile(dirs('PhaseMap'), 'real.stack');
-                            tags('real')     = fullfile(dirs('real'), 'real');
+                        dirs('realpart')     = fullfile(dirs('PhaseMap'), 'realpart.stack');
+                            tags('realpart')     = fullfile(dirs('real'), 'realpart');
                         dirs('imaginary')     = fullfile(dirs('PhaseMap'), 'imaginary.stack');
                             tags('imaginary')     = fullfile(dirs('imaginary'), 'imaginary');
                     dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
@@ -121,6 +123,12 @@ classdef Focus < handle
                     dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
                 dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
                     
+            % Programs folder TODO apply this to program version check
+            dirs('Programs') = fullfile(this.rootdir, 'Programs');
+                dirs('easyRLS') = fullfile(dirs('Programs'), 'easyRLS');
+                dirs('NeuroTools') = fullfile(dirs('Programs'), 'NeuroTools');
+            
+            % loads this in focus
             this.dir = dirs;
             this.tag = tags;
             
@@ -137,10 +145,8 @@ classdef Focus < handle
             end
 
             % --- Parameters ----------------------------------------------
-            
-            paramPath = fullfile(this.dir('Run'), 'Parameters.txt');
-                        
-            if ~exist(paramPath, 'file')
+                                    
+            if ~exist(this.tag('Parameters'), 'file')
                 error('No Parameter file found at \n%s\n', paramPath);
             end
             
@@ -212,11 +218,11 @@ classdef Focus < handle
                     this.frames.Width = Img.Width;
                     this.frames.Height = Img.Height;
                     this.frames.BitDepth = Img.BitDepth;
-                    
+                else
+                    warning('Focus.frames will not be set without images in Images directory');
                 end
-                
             else
-                warning('Focus.frames will not be set without Image directory')
+                error('no Image directory in %s', F.dir('Images'));
             end
             
             % --- Sets ----------------------------------------------------

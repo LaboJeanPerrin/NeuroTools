@@ -57,9 +57,7 @@ end
 
 % === Getting values ======================================================
 
-if ~exist(F.dir('Images'), 'dir') % if no image directory
-    error('no Image directory in %s', F.dir('Images'));
-elseif ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
+if ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
     disp('found dcimg, working with it');
     warning('config.IP will not be set correctly unless there is an Image directory');
     
@@ -87,7 +85,7 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
         config.dx = config.dx * config.IP.Binning;
         config.dy = config.dy * config.IP.Binning;
     end
-    
+
 else % no dcimg, must be tif
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
