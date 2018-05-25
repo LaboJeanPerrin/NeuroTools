@@ -81,7 +81,7 @@ classdef Focus < handle
                 tags('Config')      = fullfile(dirs('Run'), 'Config.mat');
                 tags('Parameters')  = fullfile(dirs('Run'), 'Parameters.txt');
                 dirs('Images')      = fullfile(dirs('Run'), 'Images');
-                    tags('dcimg')       = fullfile(dirs('Images'), 'stack');
+                    tags('dcimg')       = fullfile(dirs('Images'), 'dcimg');
                 dirs('Behaviour')   = fullfile(dirs('Run'), 'Behaviour');
                 dirs('Stimulus')    = fullfile(dirs('Run'), 'Stimulus');
                 dirs('Analysis')    = fullfile(dirs('Run'), 'Analysis');

@@ -59,7 +59,7 @@ end
 
 if ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
     disp('found dcimg, working with it');
-    warning('config.IP will not be set correctly unless there is an Image directory');
+    warning('config.IP will not be set correctly without images in the Image directory');
     
     % tries to find at least one image for dcimg parameters
     image = dir(fullfile(F.dir('Images'), '*.tif'));
