@@ -190,8 +190,9 @@ function configToFocus(config, F)
                 fprintf('version check --- %s : OK\n', projs{i} );
             end
         end
-    catch
-       warning('impossible to check code version on windows or no tag found') 
+    catch ME
+       disp(ME);
+       warning('impossible to check code version on windows or no tag found');
     end
 end
 

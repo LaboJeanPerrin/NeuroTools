@@ -126,10 +126,15 @@ classdef Focus < handle
                                 tags('pmp_imaginary')       = fullfile(dirs('pmp_imaginary'), 'imaginary');
                         dirs('PhaseMapNeuron')     = fullfile(dirs('PhaseMap'), 'neuron');
                             dirs('pmn_amplitude')       = fullfile(dirs('PhaseMapNeuron'), 'amplitude');
+                                tags('pmn_amplitude')       = fullfile(dirs('pmn_amplitude'), 'amplitude.stack');
                             dirs('pmn_phase')           = fullfile(dirs('PhaseMapNeuron'), 'phase');
+                                tags('pmn_phase')       = fullfile(dirs('pmn_phase'), 'phase.stack');
                             dirs('pmn_deltaphi')        = fullfile(dirs('PhaseMapNeuron'), 'deltaphi');
+                                tags('pmn_deltaphi')       = fullfile(dirs('pmn_deltaphi'), 'deltaphi.stack');
                             dirs('pmn_realpart')        = fullfile(dirs('PhaseMapNeuron'), 'realpart');
+                                tags('pmn_realpart')       = fullfile(dirs('pmn_realpart'), 'realpart.stack');
                             dirs('pmn_imaginary')       = fullfile(dirs('PhaseMapNeuron'), 'imaginary');
+                                tags('pmn_imaginary')       = fullfile(dirs('pmn_imaginary'), 'imaginary.stack');
                     dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
                 dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
                     
