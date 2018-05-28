@@ -49,7 +49,7 @@ config.version = struct();
 
 for proj = {'easyRLS', 'NeuroTools'}
     try
-        config.version.(proj{1}) = codeVersion(proj{1});
+        config.version.(proj{1}) = codeVersion(F,proj{1});
     catch me
         warning(me.identifier, 'can not find %s code in default directory\n%s', proj{1}, me.message)
     end
@@ -183,12 +183,15 @@ function configToFocus(config, F)
     versions = struct2cell(config.version);
     try
         for i = 1:2
-            if ~strcmp(versions{i}, codeVersion(projs{i}))            
-                warning('code version for %s do not match\nconfig: %s, current: %s', projs{i}, versions{i}, codeVersion(projs{i}));
+            if ~strcmp(versions{i}, codeVersion(F,projs{i}))            
+                warning('code version for %s do not match\nconfig: %s, current: %s',...
+                    projs{i}, versions{i}, codeVersion(F,projs{i}));
+            else
+                fprintf('version check --- %s : OK\n', projs{i} );
             end
         end
     catch
-       warning('impossible to check code version on windows') 
+       warning('impossible to check code version on windows or no tag found') 
     end
 end
 
@@ -209,14 +212,10 @@ function parsed = parseDescription(descr)
 
 end
 
-function version = codeVersion(proj)
+function version = codeVersion(F,proj)
 % return the git name of the commit
 
-    focusPath = mfilename('fullpath');
-    toErase = fullfile('NeuroTools','Matlab','+NT','Config');
-    programPath = erase(focusPath,toErase);
-    path = fullfile(programPath, proj);
-    cd(path);
+    cd(F.dir(proj));
     [status, cmdout] = unix('git describe --tags');
     if status; warning('unable to get program version');
     else; version = cmdout(1:end-1); end

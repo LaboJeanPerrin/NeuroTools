@@ -128,6 +128,7 @@ classdef Focus < handle
             % Programs folder TODO apply this to program version check
             dirs('Programs') = fullfile(this.rootdir, 'Programs');
                 dirs('easyRLS') = fullfile(dirs('Programs'), 'easyRLS');
+                    dirs('caTools') = fullfile(dirs('easyRLS'), fullfile('Tools','caTools'));
                 dirs('NeuroTools') = fullfile(dirs('Programs'), 'NeuroTools');
             
             % loads this in focus
@@ -224,7 +225,7 @@ classdef Focus < handle
                     warning('Focus.frames will not be set without images in Images directory');
                 end
             else
-                error('no Image directory in %s', F.dir('Images'));
+                error('no Image directory in %s', this.dir('Images'));
             end
             
             % --- Sets ----------------------------------------------------
