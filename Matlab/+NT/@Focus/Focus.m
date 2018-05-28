@@ -104,17 +104,6 @@ classdef Focus < handle
                         dirs('RefBrain')      = fullfile(dirs('Registration'), 'RefBrain');
                             tags('RefBrain')      = fullfile(dirs('RefBrain'), 'RefBrain.nhdr');
                     dirs('Regression')    = fullfile(dirs('Analysis'), 'Regression');
-                    dirs('PhaseMap')      = fullfile(dirs('Analysis'), 'PhaseMap');
-                        dirs('amplitude')     = fullfile(dirs('PhaseMap'), 'amplitude.stack');
-                            tags('amplitude')     = fullfile(dirs('amplitude'), 'amplitude');
-                        dirs('phase')     = fullfile(dirs('PhaseMap'), 'phase.stack');
-                            tags('phase')     = fullfile(dirs('phase'), 'phase');
-                        dirs('deltaphi')     = fullfile(dirs('PhaseMap'), 'deltaphi.stack');
-                            tags('deltaphi')     = fullfile(dirs('deltaphi'), 'deltaphi');
-                        dirs('realpart')     = fullfile(dirs('PhaseMap'), 'realpart.stack');
-                            tags('realpart')     = fullfile(dirs('realpart'), 'realpart');
-                        dirs('imaginary')     = fullfile(dirs('PhaseMap'), 'imaginary.stack');
-                            tags('imaginary')     = fullfile(dirs('imaginary'), 'imaginary');
                     dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
                     dirs('Baseline')      = fullfile(dirs('Analysis'), 'Baseline');
                         dirs('BaselineNeuron') = fullfile(dirs('Baseline'), 'neuron');
@@ -122,6 +111,25 @@ classdef Focus < handle
                     dirs('DFF')           = fullfile(dirs('Analysis'), 'DFF');
                         dirs('DFFNeuron')      = fullfile(dirs('DFF'), 'neuron');
                         dirs('DFFPixel')       = fullfile(dirs('DFF'), 'pixel');
+                    % pmp = PhaseMapPixel, pmn = PhaseMapNeuron to prevent collision
+                    dirs('PhaseMap')      = fullfile(dirs('Analysis'), 'PhaseMap');
+                        dirs('PhaseMapPixel')      = fullfile(dirs('PhaseMap'), 'pixel');
+                            dirs('pmp_amplitude')       = fullfile(dirs('PhaseMapPixel'), 'amplitude.stack');
+                                tags('pmp_amplitude')       = fullfile(dirs('pmp_amplitude'), 'amplitude');
+                            dirs('pmp_phase')           = fullfile(dirs('PhaseMapPixel'), 'phase.stack');
+                                tags('pmp_phase')           = fullfile(dirs('pmp_phase'), 'phase');
+                            dirs('pmp_deltaphi')        = fullfile(dirs('PhaseMapPixel'), 'deltaphi.stack');
+                                tags('pmp_deltaphi')        = fullfile(dirs('pmp_deltaphi'), 'deltaphi');
+                            dirs('pmp_realpart')        = fullfile(dirs('PhaseMapPixel'), 'realpart.stack');
+                                tags('pmp_realpart')        = fullfile(dirs('pmp_realpart'), 'realpart');
+                            dirs('pmp_imaginary')       = fullfile(dirs('PhaseMapPixel'), 'imaginary.stack');
+                                tags('pmp_imaginary')       = fullfile(dirs('pmp_imaginary'), 'imaginary');
+                        dirs('PhaseMapNeuron')     = fullfile(dirs('PhaseMap'), 'neuron');
+                            dirs('pmn_amplitude')       = fullfile(dirs('PhaseMapNeuron'), 'amplitude');
+                            dirs('pmn_phase')           = fullfile(dirs('PhaseMapNeuron'), 'phase');
+                            dirs('pmn_deltaphi')        = fullfile(dirs('PhaseMapNeuron'), 'deltaphi');
+                            dirs('pmn_realpart')        = fullfile(dirs('PhaseMapNeuron'), 'realpart');
+                            dirs('pmn_imaginary')       = fullfile(dirs('PhaseMapNeuron'), 'imaginary');
                     dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
                 dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
                     
