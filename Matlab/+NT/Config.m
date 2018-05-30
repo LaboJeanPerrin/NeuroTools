@@ -57,8 +57,10 @@ end
 
 % === Getting values ======================================================
 
-if ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
+if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg
     disp('found dcimg, working with it');
+    config.Source = 'dcimg'; % tells the focus he is working with dcimg
+    Focused.MmapOnDCIMG(F); % call this to generate mat file if not existing
     warning('config.IP will not be set correctly without images in the Image directory');
     
     % tries to find at least one image for dcimg parameters
@@ -81,12 +83,20 @@ if ~isempty(dir(fullfile(F.dir('Images'), '*.dcimg'))) % if found dcimg
             case 'Hamamatsu'
                 config.dx = 0.4; %µm
                 config.dy = 0.4; %µm
+            otherwise
+                warning('%s camera case not implemented', config.IP.Software);
         end
         config.dx = config.dx * config.IP.Binning;
         config.dy = config.dy * config.IP.Binning;
+    else
+        warning('no image found, using default parameters (dx=dy=0.8µm)');
+        config.dx = 0.8;
+        config.dy = 0.8;
     end
 
-else % no dcimg, must be tif
+elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
+    % tells the focus he is working with tif
+    config.Source = 'tif'; 
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
@@ -154,7 +164,9 @@ else % no dcimg, must be tif
         config.sets(id).z = dz*(i-1);
 
     end
-      
+    
+else
+    error('no data found in %s', F.dir('Images'));      
 end  
 
 % --- Save configuration
@@ -177,6 +189,9 @@ function configToFocus(config, F)
     F.dx = config.dx;
     F.dy = config.dy;
     % TODO other elements (like dx, dy)
+    
+    % special argument : source (source data)
+    F.extra.Source = config.Source;
     
     %version check
     projs = fieldnames(config.version);
