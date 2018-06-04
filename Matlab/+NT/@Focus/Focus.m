@@ -146,7 +146,7 @@ classdef Focus < handle
             if exist(this.dir('Images'), 'dir')
                 
                 Images = dir([this.dir('Images') '*.tif']);
-                if numel(Images)
+                if numel(Images) % if not empty
                     
                     tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
                     Img = imfinfo([this.dir('Images') Images(1).name]);
