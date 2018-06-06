@@ -32,8 +32,6 @@ dirs('Run') = fullfile(rootdir, 'Data', sdr);
         dirs('Mask')          = fullfile(dirs('Analysis'), 'Mask');
             tags('mask')          = fullfile(dirs('Mask'), 'mask.mat');
         dirs('Registration')  = fullfile(dirs('Analysis'), 'Registration');
-            dirs('RefBrain')      = fullfile(dirs('Registration'), 'RefBrain');
-                tags('RefBrain')      = fullfile(dirs('RefBrain'), 'RefBrain.nhdr');
         dirs('Regression')    = fullfile(dirs('Analysis'), 'Regression');
         dirs('Segmentation')  = fullfile(dirs('Analysis'), 'Segmentation');
         dirs('Baseline')      = fullfile(dirs('Analysis'), 'Baseline');
@@ -74,5 +72,8 @@ dirs('Programs') = fullfile(rootdir, 'Programs');
     dirs('easyRLS') = fullfile(dirs('Programs'), 'easyRLS');
         dirs('caTools') = fullfile(dirs('easyRLS'), fullfile('Tools','caTools'));
     dirs('NeuroTools') = fullfile(dirs('Programs'), 'NeuroTools');
+    
+% RefBrains folder
+dirs('RefBrains') = fullfile(rootdir, 'RefBrains');
 
 end
