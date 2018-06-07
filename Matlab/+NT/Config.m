@@ -57,9 +57,10 @@ end
 
 % === Getting values ======================================================
 
+% --- dcimg ---
 if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg
     disp('found dcimg, working with it');
-    config.Source = 'dcimg'; % tells the focus he is working with dcimg
+    F.extra.Source = 'dcimg'; % tells the focus he is working with dcimg
     Focused.MmapOnDCIMG(F); % call this to generate mat file if not existing
     warning('config.IP will not be set correctly without images in the Image directory');
     
@@ -94,9 +95,13 @@ if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg
         config.dy = 0.8;
     end
 
+% --- tif ---
 elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
+    % build F.frames according to images
+    loadFramesInFocus(F);
+    
     % tells the focus he is working with tif
-    config.Source = 'tif'; 
+    F.extra.Source = 'tif'; 
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
@@ -139,10 +144,8 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
         ['^' config.IP.prefix '([0-9]*)'], 'tokens'), {images(:).name}));
   
     % --- automatic layers, linear
-
     % Number of layers
         nL = F.param.NLayers;
-
     % Altitudes TODO verify
         dz = F.param.Increment;
 
@@ -150,16 +153,12 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
 
         id = numel(config.sets)+1;
         config.sets(id).id = id;
-
         % Type
         config.sets(id).type = 'Layer';
-
         % Index
         config.sets(id).frames = frames(i:nL:end);
-
         % Times
         config.sets(id).t = config.sets(id).frames*config.dt;
-
         % Altitudes
         config.sets(id).z = dz*(i-1);
 
@@ -188,10 +187,6 @@ function configToFocus(config, F)
     F.dt = config.dt;
     F.dx = config.dx;
     F.dy = config.dy;
-    % TODO other elements (like dx, dy)
-    
-    % special argument : source (source data)
-    F.extra.Source = config.Source;
     
     %version check
     projs = fieldnames(config.version);
@@ -236,5 +231,29 @@ function version = codeVersion(F,proj)
     if status; warning('unable to get program version');
     else; version = cmdout(1:end-1); end
     
+end
+
+
+function loadFramesInFocus(F)
+% loads frames in focus
+% (previously directly in focus)
+    Images = dir([F.dir('Images') '*.tif']);
+    if numel(Images) % if not empty
+
+        tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
+        Img = imfinfo([F.dir('Images') Images(1).name]);
+
+        F.frames = struct();
+        F.frames.Number = numel(Images);
+        F.frames.Prefix = tmp{1}{1};
+        F.frames.Format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
+        F.frames.Extension = tmp{1}{3};
+        F.frames.Width = Img.Width;
+        F.frames.Height = Img.Height;
+        F.frames.BitDepth = Img.BitDepth;
+    else
+        warning('Focus.frames will not be set without images in Images directory');
+    end
+
 end
     

@@ -147,30 +147,6 @@ classdef Focus < handle
                     warning('Focus:Parameters', 'Couldn''t read this version of the Parameters file.');
             end
             
-            % --- Frame information
-            if exist(this.dir('Images'), 'dir')
-                
-                Images = dir([this.dir('Images') '*.tif']);
-                if numel(Images) % if not empty
-                    
-                    tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
-                    Img = imfinfo([this.dir('Images') Images(1).name]);
-                    
-                    this.frames = struct();
-                    this.frames.Number = numel(Images);
-                    this.frames.Prefix = tmp{1}{1};
-                    this.frames.Format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
-                    this.frames.Extension = tmp{1}{3};
-                    this.frames.Width = Img.Width;
-                    this.frames.Height = Img.Height;
-                    this.frames.BitDepth = Img.BitDepth;
-                else
-                    warning('Focus.frames will not be set without images in Images directory');
-                end
-            else
-                error('no Image directory in %s', this.dir('Images'));
-            end
-            
             % --- Sets ----------------------------------------------------
             
             this.sets = struct('id', {}, 'type', {}, 'frames', {}, 'z', {});
