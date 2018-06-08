@@ -39,7 +39,7 @@ classdef Focus < handle
     methods
         
         % _________________________________________________________________
-        function this = Focus(path, study, date, run)
+        function this = Focus(path, study, date, run, Analysis)
         %Focus::constructor
         % call focus with NT.Focus(path, study, date, run)
         
@@ -47,6 +47,7 @@ classdef Focus < handle
         % study:    name of study (if '', ignored)
         % date:     date of experiment yyyy-mm-dd
         % run:      run number
+        % Analysis: optional argument to get analysis parameters
                     
             % --- Basic properties ----------------------------------------
 
@@ -62,6 +63,10 @@ classdef Focus < handle
             this.name = [this.study ' ' this.date ' (' this.run ')'];
             
             this.Analysis = struct(); % empty structure to store analysis parameters
+            
+            if exist('Analysis', 'var') % optionally fills with given parameters
+                this.Analysis = Analysis;
+            end
             
             % --- Directories ---------------------------------------------
         
