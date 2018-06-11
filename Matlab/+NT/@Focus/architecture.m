@@ -7,8 +7,11 @@ function [dirs, tags] = architecture(rootdir, sdr)
 dirs = containers.Map; % directories
 tags = containers.Map; % tags
 
+% Root folder
+dirs('Root') = fullfile(rootdir);
+
 % Run folder
-dirs('Run') = fullfile(rootdir, 'Data', sdr);
+dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
     tags('Config')      = fullfile(dirs('Run'), 'Config.mat');
     tags('Parameters')  = fullfile(dirs('Run'), 'Parameters.txt');
     dirs('Images')      = fullfile(dirs('Run'), 'Images');
@@ -68,12 +71,12 @@ dirs('Run') = fullfile(rootdir, 'Data', sdr);
     dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
 
 % Programs folder
-dirs('Programs') = fullfile(rootdir, 'Programs');
+dirs('Programs') = fullfile(dirs('Root'), 'Programs');
     dirs('easyRLS') = fullfile(dirs('Programs'), 'easyRLS');
         dirs('caTools') = fullfile(dirs('easyRLS'), fullfile('Tools','caTools'));
     dirs('NeuroTools') = fullfile(dirs('Programs'), 'NeuroTools');
     
 % RefBrains folder
-dirs('RefBrains') = fullfile(rootdir, 'RefBrains');
+dirs('RefBrains') = fullfile(dirs('Root'), 'RefBrains');
 
 end
