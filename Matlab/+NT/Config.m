@@ -60,7 +60,7 @@ end
 % --- dcimg ---
 if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg
     disp('found dcimg, working with it');
-    F.extra.Source = 'dcimg'; % tells the focus he is working with dcimg
+    config.Source = 'dcimg'; % tells the focus he is working with dcimg
     Focused.MmapOnDCIMG(F); % call this to generate mat file if not existing
     warning('config.IP will not be set correctly without images in the Image directory');
     
@@ -101,7 +101,7 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
     loadFramesInFocus(F);
     
     % tells the focus he is working with tif
-    F.extra.Source = 'tif'; 
+    config.Source = 'tif'; 
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
@@ -187,6 +187,13 @@ function configToFocus(config, F)
     F.dt = config.dt;
     F.dx = config.dx;
     F.dy = config.dy;
+    
+    try % TODO separe focus to analyse data / Focus to visualize data
+        F.extra.Source = config.Source; % loads the recorded source
+    catch
+        warning('no source found in config, setting Focus source to default (dcimg). To set it manually change F.extra.source to ''tif'' for instance');
+        F.extra.Source = 'dcimg';
+    end
     
     %version check
     projs = fieldnames(config.version);
