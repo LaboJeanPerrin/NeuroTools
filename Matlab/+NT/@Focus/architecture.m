@@ -45,28 +45,24 @@ dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
             dirs('DFFPixel')       = fullfile(dirs('DFF'), 'pixel');
         % pmp = PhaseMapPixel, pmn = PhaseMapNeuron to prevent collision
         dirs('PhaseMap')      = fullfile(dirs('Analysis'), 'PhaseMap');
-            dirs('PhaseMapPixel')      = fullfile(dirs('PhaseMap'), 'pixel');
-                dirs('pmp_amplitude')       = fullfile(dirs('PhaseMapPixel'), 'amplitude.stack');
-                    tags('pmp_amplitude')       = fullfile(dirs('pmp_amplitude'), 'amplitude');
-                dirs('pmp_phase')           = fullfile(dirs('PhaseMapPixel'), 'phase.stack');
-                    tags('pmp_phase')           = fullfile(dirs('pmp_phase'), 'phase');
-                dirs('pmp_deltaphi')        = fullfile(dirs('PhaseMapPixel'), 'deltaphi.stack');
-                    tags('pmp_deltaphi')        = fullfile(dirs('pmp_deltaphi'), 'deltaphi');
-                dirs('pmp_realpart')        = fullfile(dirs('PhaseMapPixel'), 'realpart.stack');
-                    tags('pmp_realpart')        = fullfile(dirs('pmp_realpart'), 'realpart');
-                dirs('pmp_imaginary')       = fullfile(dirs('PhaseMapPixel'), 'imaginary.stack');
-                    tags('pmp_imaginary')       = fullfile(dirs('pmp_imaginary'), 'imaginary');
-            dirs('PhaseMapNeuron')     = fullfile(dirs('PhaseMap'), 'neuron');
-                dirs('pmn_amplitude')       = fullfile(dirs('PhaseMapNeuron'), 'amplitude');
-                    tags('pmn_amplitude')       = fullfile(dirs('pmn_amplitude'), 'amplitude.stack');
-                dirs('pmn_phase')           = fullfile(dirs('PhaseMapNeuron'), 'phase');
-                    tags('pmn_phase')       = fullfile(dirs('pmn_phase'), 'phase.stack');
-                dirs('pmn_deltaphi')        = fullfile(dirs('PhaseMapNeuron'), 'deltaphi');
-                    tags('pmn_deltaphi')       = fullfile(dirs('pmn_deltaphi'), 'deltaphi.stack');
-                dirs('pmn_realpart')        = fullfile(dirs('PhaseMapNeuron'), 'realpart');
-                    tags('pmn_realpart')       = fullfile(dirs('pmn_realpart'), 'realpart.stack');
-                dirs('pmn_imaginary')       = fullfile(dirs('PhaseMapNeuron'), 'imaginary');
-                    tags('pmn_imaginary')       = fullfile(dirs('pmn_imaginary'), 'imaginary.stack');
+            dirs('PhaseMapSignal') = fullfile(dirs('PhaseMap'), 'signal');
+                dirs('PhaseMapSignalPixel')      = fullfile(dirs('PhaseMapSignal'), 'pixel');
+                    fillArch('PhaseMapSignalPixel',...
+                        'pmpsig',... 'phasemap on signal
+                        {'amplitude', 'phase', 'deltaphi', 'realpart', 'imaginary'});
+                dirs('PhaseMapSignalNeuron')     = fullfile(dirs('PhaseMapSignal'), 'neuron');
+                    fillArch('PhaseMapSignalNeuron',...
+                        'pmnsig',...
+                        {'amplitude', 'phase', 'deltaphi', 'realpart', 'imaginary'});
+            dirs('PhaseMapDFF') = fullfile(dirs('PhaseMap'), 'dff');
+                dirs('PhaseMapDFFPixel')      = fullfile(dirs('PhaseMapDFF'), 'pixel');
+                    fillArch('PhaseMapDFFPixel',...
+                        'pmpdff',...
+                        {'amplitude', 'phase', 'deltaphi', 'realpart', 'imaginary'});
+                dirs('PhaseMapDFFNeuron')     = fullfile(dirs('PhaseMapDFF'), 'neuron');
+                    fillArch('PhaseMapDFFNeuron',...
+                        'pmndff',...
+                        {'amplitude', 'phase', 'deltaphi', 'realpart', 'imaginary'});
         dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
     dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
 
@@ -78,5 +74,15 @@ dirs('Programs') = fullfile(dirs('Root'), 'Programs');
     
 % RefBrains folder
 dirs('RefBrains') = fullfile(dirs('Root'), 'RefBrains');
+
+    function fillArch(parent, prefix, labels)
+        % this function create a list of tags following the pattern
+        
+        for l = labels
+            fulltag = [ prefix '_' l{:} ];
+            dirs(fulltag) = fullfile(dirs(parent), [l{:} '.stack']);
+                tags(fulltag)       = fullfile(dirs(fulltag), l{:});
+        end
+    end
 
 end
