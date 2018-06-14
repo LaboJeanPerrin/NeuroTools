@@ -102,6 +102,18 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if tif exist
     
     % tells the focus he is working with tif
     config.Source = 'tif'; 
+    % try to find the space 
+    try % TODO improve this (it was done very quickly before Geoffrey's paper
+        fid = fopen(fullfile(F.dir('Run'), 'space'));
+        origSpace = fgetl(fid);
+        flcose(fid);
+        fprintf('detected space : %s\n', origSpace);
+    catch
+        origSpace = 'ARIT';
+        warning('space not found, setting %s as default', origSpace);
+    end
+    config.SourceSpace = origSpace;        
+    
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
 
@@ -193,6 +205,14 @@ function configToFocus(config, F)
     catch
         warning('no source found in config, setting Focus source to default (dcimg). To set it manually change F.extra.source to ''tif'' for instance');
         F.extra.Source = 'dcimg';
+    end
+    if strcmp(F.extra.Source, 'tif') % TODO improve this
+        try
+            F.extra.sourceSpace = config.SourceSpace; % loads source space
+        catch
+            F.extra.sourceSpace = 'ARIT';
+            warning('no space found, setting to default (%s)', F.extra.sourceSpace)
+        end
     end
     
     %version check
