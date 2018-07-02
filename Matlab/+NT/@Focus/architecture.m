@@ -1,11 +1,12 @@
-function [dirs, tags] = architecture(rootdir, sdr)
+function [dirs, tags, gets] = architecture(rootdir, sdr)
 % returns the file hierarchy
 % sdr is fullfile study/date/run
 
 % --- Architecture
-            
+
 dirs = containers.Map; % directories
 tags = containers.Map; % tags
+gets = struct(); % functions
 
 % Root folder
 dirs('Root') = fullfile(rootdir);
@@ -75,6 +76,22 @@ dirs('Programs') = fullfile(dirs('Root'), 'Programs');
 % RefBrains folder
 dirs('RefBrains') = fullfile(dirs('Root'), 'RefBrains');
 
+% averaged phasemaps
+dirs('AveragedPhaseMaps') = fullfile(dirs('Root'), 'Data', 'AveragedPhaseMaps');
+
+
+% functions
+% the goal of these functions is to get names depending of focus parameters
+% that can change after focus definition
+gets.refBrainName = @refBrainName;
+gets.refPath = @refPath;
+gets.regPath = @regPath;
+gets.transPath = @transPath;
+gets.autoTransName = @autoTransName;
+
+
+
+% function
     function fillArch(parent, prefix, labels)
         % this function create a list of tags following the pattern
         
@@ -85,4 +102,39 @@ dirs('RefBrains') = fullfile(dirs('Root'), 'RefBrains');
         end
     end
 
+end
+
+function out = refBrainName(F)
+% shorten the reBrainName (removes the extension)
+    sp = split(F.Analysis.RefBrain, '.');
+    out = sp{1};
+end
+
+function out = refPath(F)
+% give the path of the reference brain
+    out = fullfile(F.dir('RefBrains'), F.Analysis.RefBrain);
+end
+
+function out = regPath(F)
+    out = fullfile(F.dir('Registration'), refBrainName(F));
+end
+
+function out = transPath(F, transformation, mov)
+    out = fullfile(regPath(F), string([autoTransName(F, transformation, mov) '.xform']));
+end
+
+function [transformation, reformatedName] = autoTransName(F, transformation, mov)
+% --- DRAFT --- returns automatic name for transformation
+% this function treats 'affine' and 'warp' as default cases
+    switch transformation % detect default cases
+        case 'affine' % search affine
+            transformation = [ 'AFFINE_' mov '_TO_' refBrainName(F) ];
+            reformatedName = [ 'AFFINE_' mov '_ON_' refBrainName(F) ];
+        case 'warp' % search non-rigid
+            transformation = [ 'WARP_' mov '_TO_' refBrainName(F) ];
+            reformatedName = [ 'WARP_' mov '_ON_' refBrainName(F) ];
+        otherwise % personal transformation
+            % transformation does not change
+            reformatedName = [ 'reformated-with_' transformation ];                
+    end
 end

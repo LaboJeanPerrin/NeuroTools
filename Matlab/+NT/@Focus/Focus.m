@@ -31,8 +31,9 @@ classdef Focus < handle
     end
     
     properties (Hidden)
-        dir
-        tag
+        dir % dictionnary of directories
+        tag % dictionnary of files
+        get % structure of functions
     end
     
     % --- METHODS ---------------------------------------------------------
@@ -76,7 +77,7 @@ classdef Focus < handle
             % --- Data dir
             
             sdr = fullfile(this.study, this.date, this.run); % study date run
-            [ this.dir, this.tag ] = this.architecture(this.rootdir, sdr); % loads architecture in focus
+            [ this.dir, this.tag, this.get ] = this.architecture(this.rootdir, sdr); % loads architecture in focus
             
             % Check existence
             if ~exist(this.dir('Run'), 'dir')
@@ -185,6 +186,6 @@ classdef Focus < handle
     methods (Static)
       define(varargin)
       F = current()
-      [dirs, tags] = architecture(rootdir, sdr)
+      [dirs, tags, gets] = architecture(rootdir, sdr)
    end
 end
