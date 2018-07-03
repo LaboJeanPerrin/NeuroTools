@@ -223,15 +223,17 @@ for i = 1:numel(File)
             end
             
             % Delay before
-            res = regexp(line, '^DelayBefore +(.+)', 'tokens');
+            res = regexp(line, '^DelayBefore\s+([\-\d\.]+)\s+(\S+)', 'tokens');
             if ~isempty(res)
-                this.DelayBefore = strtrim(res{1}{1});
+                %this.DelayBefore = strtrim(res{1}{1});
+                this.DelayBefore = convert(res, in.TimeUnit);
             end
             
             % Delay after
-            res = regexp(line, '^DelayAfter +(.+)', 'tokens');
+            res = regexp(line, '^DelayAfter\s+([\-\d\.]+)\s+(\S+)', 'tokens');
             if ~isempty(res)
-                this.DelayAfter = strtrim(res{1}{1});
+                %this.DelayAfter = strtrim(res{1}{1});
+                this.DelayAfter = convert(res, in.TimeUnit);
             end
             
         case 'Layers'
