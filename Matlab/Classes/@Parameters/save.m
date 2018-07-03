@@ -60,6 +60,13 @@ sec('Light scan');
 T = {'HM mode' this.HM_Mode '' ; ...
      'Scan shape' this.HM_Shape '' ; ...
      'HM rate' this.HM_Rate 'Hz'};
+
+switch this.HM_Mode
+    case 'Slave'
+        T = [T ; ...
+            {'DelayBefore' this.DelayBefore 'ms' ; ...
+            'DelayAfter' this.DelayAfter 'ms'}];
+end
  
 addTable(T, {'Param' 'Value' 'Unit'});
 

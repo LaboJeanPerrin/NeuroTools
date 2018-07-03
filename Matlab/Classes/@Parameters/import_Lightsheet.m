@@ -49,6 +49,12 @@ this.OP_um2V = get(LS.UI.OP_um2V, 'String');
 % HM mode
 this.HM_Mode = get(get(LS.UI.HM_Mode, 'SelectedTab'), 'Title');
 
+switch this.HM_Mode
+    case 'Slave'
+        this.DelayBefore = get(LS.UI.DelayBefore, 'String');
+        this.DelayAfter = get(LS.UI.DelayAfter, 'String');
+end
+
 % Scan shape
 list = get(LS.UI.HM_Shape, 'String');
 this.HM_Shape = list{get(LS.UI.HM_Shape, 'Value')};

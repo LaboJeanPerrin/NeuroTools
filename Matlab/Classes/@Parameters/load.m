@@ -222,6 +222,18 @@ for i = 1:numel(File)
                 this.HM_Rate = convert(res, in.FrequencyUnit);
             end
             
+            % Delay before
+            res = regexp(line, '^DelayBefore +(.+)', 'tokens');
+            if ~isempty(res)
+                this.DelayBefore = strtrim(res{1}{1});
+            end
+            
+            % Delay after
+            res = regexp(line, '^DelayAfter +(.+)', 'tokens');
+            if ~isempty(res)
+                this.DelayAfter = strtrim(res{1}{1});
+            end
+            
         case 'Layers'
             
             % Number of layers

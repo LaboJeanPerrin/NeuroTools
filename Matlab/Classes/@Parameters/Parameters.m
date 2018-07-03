@@ -37,6 +37,9 @@ classdef Parameters < handle
         HM_Shape
         HM_Rate
         
+        DelayBefore
+        DelayAfter
+        
         % --- Layers
         NLayers
         Exposure
