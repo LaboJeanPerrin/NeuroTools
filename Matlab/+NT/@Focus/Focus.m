@@ -173,7 +173,7 @@ classdef Focus < handle
                 
             end
             
-            % --- Default set
+            % default set
             this.select(1);
             
             % --- Config file ---
