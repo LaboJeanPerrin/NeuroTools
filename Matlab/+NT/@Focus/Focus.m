@@ -107,7 +107,7 @@ classdef Focus < handle
             % the switch could be done on the parameter file version
             switch P.Version
             
-                case {'4.1', '4.2'}
+                case {'4.1', '4.2', '4.3'}
                 
                     % --- Units
                     this.units = P.Units;

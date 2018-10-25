@@ -83,17 +83,7 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if source is tif
     loadFramesInFocus(F);
     
     % tells the focus he is working with tif
-    config.Source = 'tif'; 
-    % try to find the space 
-    try % TODO improve this (it was done very quickly before Geoffrey's paper
-        fid = fopen(fullfile(F.dir('Run'), 'space'));
-        origSpace = fgetl(fid);
-        flcose(fid);
-        fprintf('detected space : %s\n', origSpace);
-    catch
-        origSpace = 'ARIT';
-        warning('space not found, setting %s as default', origSpace);
-    end
+    config.Source = 'tif';     
     config.SourceSpace = getSpace(F);        
     
     % --- Prepare images list
@@ -134,7 +124,7 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if source is tif
     end
     
 else
-    error('no data found in %s', F.dir('Images'));      
+    warning('no data found in %s', F.dir('Images'));      
 end  
 
 % --- Save configuration
@@ -283,11 +273,11 @@ end
 function loadFramesInFocus(F)
 % loads frames in focus
 % (previously directly in focus)
-    Images = dir([F.dir('Images') '*.tif']);
+    Images = dir(fullfile(F.dir('Images'), '*.tif'));
     if numel(Images) % if not empty
 
         tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
-        Img = imfinfo([F.dir('Images') Images(1).name]);
+        Img = imfinfo(fullfile(F.dir('Images'), Images(1).name));
 
         F.frames = struct();
         F.frames.Number = numel(Images);
