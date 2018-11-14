@@ -57,6 +57,9 @@ classdef Parameters < handle
         NFrames
         RunTime
         
+        % --- Commands
+        Commands
+        
         % --- Signals
         Signals
         

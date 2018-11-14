@@ -311,6 +311,16 @@ for i = 1:numel(File)
             if ~isempty(res)                
                 this.RunTime = convert(res, in.TimeUnit);
             end
+          
+        case 'Commands'    
+            
+            % Default values
+            res = regexp(line, '(\w+)\s+(\S+)\s+([\d\.]+)', 'tokens');
+
+            i = numel(this.Commands)+1;
+            this.Commands(i).Target = res{1}{1};
+            this.Commands(i).Command = res{1}{2};
+            this.Commands(i).Time = str2double(res{1}{3});
             
         case 'Signals'
                         
