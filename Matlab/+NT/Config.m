@@ -58,10 +58,9 @@ end
 % === Getting values ======================================================
 
 % --- dcimg ---
-if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg (TODO: just detect dcimg)
-    disp('found dcimg, working with it');
+if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg found
+    disp('found dcimg, set as source');
     config.Source = 'dcimg'; % tells the focus he is working with dcimg
-    config.SourceSpace = getSpace(F);
     
     % tries to find at least one image for dcimg parameters
     image = dir(fullfile(F.dir('Images'), '*.tif'));
@@ -73,9 +72,7 @@ if exist([F.tag('dcimg') '.dcimg'], 'file') % if found dcimg (TODO: just detect 
         config.dx = 0.8;
         config.dy = 0.8;
     end
-    
     configToFocus(config, F)
-    Focused.MmapOnDCIMG(F); % call this to generate mat file if not existing
 
 % --- tif ---
 elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if source is tif
@@ -136,19 +133,6 @@ disp('Config file saved.')
 
 end
 
-function origSpace = getSpace(F)
-% try to find the space 
-    try % TODO improve this (it was done very quickly before Geoffrey's paper)
-        fid = fopen(fullfile(F.dir('Run'), 'space'));
-        origSpace = fgetl(fid);
-        fclose(fid);
-        fprintf('detected space : %s\n', origSpace);
-    catch
-        origSpace = 'ARIT';
-        warning('space not found, setting %s as default', origSpace);
-    end
-end
-
 function configToFocus(config, F)
 % loads the elements of 'config' to the focus
 
@@ -159,20 +143,8 @@ function configToFocus(config, F)
     F.dt = config.dt;
     F.dx = config.dx;
     F.dy = config.dy;
-    
-    try % load source if exists
-        % TODO separe focus to analyse data / Focus to visualize data
-        F.extra.Source = config.Source; % loads the recorded source
-    catch
-        warning('no source found in config, setting Focus source to default (dcimg). To set it manually change F.extra.source to ''tif'' for instance');
-        F.extra.Source = 'dcimg';
-    end
-    try % load source space if defined
-        F.extra.sourceSpace = config.SourceSpace; % loads source space
-    catch
-        F.extra.sourceSpace = 'ARIT';
-        warning('no space found, setting to default (%s)', F.extra.sourceSpace)
-    end
+    F.extra.Source = config.Source;
+
 end
 
 function configFields = imInfoToConfig(image)
