@@ -40,6 +40,7 @@ File = tmp{1};
 
 this.Signals = struct();
 this.Signals.DS = struct('tstart', {}, 'tstop', {}, 'default', {});
+this.Commands = struct('Target', {}, 'Command', {}, 'Time', {});
 
 % --- Parse file ----------------------------------------------------------
 
@@ -316,11 +317,13 @@ for i = 1:numel(File)
             
             % Default values
             res = regexp(line, '(\w+)\s+(\S+)\s+([\d\.]+)', 'tokens');
-
-            i = numel(this.Commands)+1;
-            this.Commands(i).Target = res{1}{1};
-            this.Commands(i).Command = res{1}{2};
-            this.Commands(i).Time = str2double(res{1}{3});
+            
+            if ~isempty(res)
+                j = numel(this.Commands)+1;
+                this.Commands(j).Target = res{1}{1};
+                this.Commands(j).Command = res{1}{2};
+                this.Commands(j).Time = str2double(res{1}{3});
+            end
             
         case 'Signals'
                         
