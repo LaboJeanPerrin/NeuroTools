@@ -32,17 +32,17 @@ this.FluoMode = list{get(LS.UI.FluoMode, 'Value')};
 % --- Mirrors & piezo -----------------------------------------------------
 
 % Horizontal mirror
-this.HM_Position_min = get(LS.UI.HM_Position_min, 'String');
-this.HM_Position_max = get(LS.UI.HM_Position_max, 'String');
-this.HM_um2V = get(LS.UI.HM_um2V, 'String');
+this.HM_Position_min = str2double(get(LS.UI.HM_Position_min, 'String'));
+this.HM_Position_max = str2double(get(LS.UI.HM_Position_max, 'String'));
+this.HM_um2V = str2double(get(LS.UI.HM_um2V, 'String'));
 
 % Vertical mirror
-this.VM_Position = get(LS.UI.VM_Position, 'String');
-this.VM_um2V = get(LS.UI.VM_um2V, 'String');
+this.VM_Position = str2double(get(LS.UI.VM_Position, 'String'));
+this.VM_um2V = str2double(get(LS.UI.VM_um2V, 'String'));
 
 % Objective piezo
-this.OP_Position = get(LS.UI.OP_Position, 'String');
-this.OP_um2V = get(LS.UI.OP_um2V, 'String');
+this.OP_Position = str2double(get(LS.UI.OP_Position, 'String'));
+this.OP_um2V = str2double(get(LS.UI.OP_um2V, 'String'));
 
 % --- Light scan ----------------------------------------------------------
 
@@ -51,8 +51,8 @@ this.HM_Mode = get(get(LS.UI.HM_Mode, 'SelectedTab'), 'Title');
 
 switch this.HM_Mode
     case 'Slave'
-        this.DelayBefore = get(LS.UI.DelayBefore, 'String');
-        this.DelayAfter = get(LS.UI.DelayAfter, 'String');
+        this.DelayBefore = str2double(get(LS.UI.DelayBefore, 'String'));
+        this.DelayAfter = str2double(get(LS.UI.DelayAfter, 'String'));
 end
 
 % Scan shape
@@ -60,45 +60,45 @@ list = get(LS.UI.HM_Shape, 'String');
 this.HM_Shape = list{get(LS.UI.HM_Shape, 'Value')};
 
 % HM Rate
-this.HM_Rate = get(LS.UI.HM_Rate, 'String');
+this.HM_Rate = str2double(get(LS.UI.HM_Rate, 'String'));
 
 % --- Layers --------------------------------------------------------------
 
-this.NLayers = get(LS.UI.NLayers, 'String');
-this.Exposure = get(LS.UI.Exposure, 'String');
-this.Delay = get(LS.UI.Delay, 'String');
+this.NLayers = str2double(get(LS.UI.NLayers, 'String'));
+this.Exposure = str2double(get(LS.UI.Exposure, 'String'));
+this.Delay = str2double(get(LS.UI.Delay, 'String'));
 
-if str2double(this.NLayers)>1
+if this.NLayers>1
     
-    this.DelayLong = get(LS.UI.DelayLong, 'String');
+    this.DelayLong = str2double(get(LS.UI.DelayLong, 'String'));
     
     % Steps shape
     list = get(LS.UI.StepsShape, 'String');
     this.StepsShape = list{get(LS.UI.StepsShape, 'Value')};
     
-    this.Increment = get(LS.UI.Increment, 'String');
+    this.Increment = str2double(get(LS.UI.Increment, 'String'));
     
     % Stabilization
     list = get(LS.UI.StabShape, 'String');
     this.StabShape = list{get(LS.UI.StabShape, 'Value')};
-    this.StabRatio = get(LS.UI.StabRatio, 'String');
+    this.StabRatio = str2double(get(LS.UI.StabRatio, 'String'));
     
 else
     
-    this.DelayLong = '';
-    this.StepsShape = '';
-    this.Increment = '';
-    this.StabShape = '';
-    this.StabRatio = '';
+    this.DelayLong = [];
+    this.StepsShape = [];
+    this.Increment = [];
+    this.StabShape = [];
+    this.StabRatio = [];
     
 end
 
 % --- Timing --------------------------------------------------------------
 
-this.NCycles = get(LS.UI.NCycles, 'String');
-this.CycleTime = get(LS.UI.CycleTime, 'String');
-this.NFrames = get(LS.UI.NFrames, 'String');
-this.RunTime = get(LS.UI.RunTime, 'String');
+this.NCycles = str2double(get(LS.UI.NCycles, 'String'));
+this.CycleTime = str2double(get(LS.UI.CycleTime, 'String'));
+this.NFrames = str2double(get(LS.UI.NFrames, 'String'));
+this.RunTime = str2double(get(LS.UI.RunTime, 'String'));
 
 % --- Signals -------------------------------------------------------------
 
