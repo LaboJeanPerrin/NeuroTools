@@ -56,6 +56,12 @@ classdef Alp < handle
         % === Destructor ==================================================
         function delete(this)
             
+            % Stop the device
+            fprintf('Stopping the device ...'); tic
+            res = calllib(this.dll, 'AlpProjHalt', this.device);
+            fprintf(' %0.2f sec\t\t', toc);
+            this.dispResult(res);
+            
             % Free the device
             fprintf('Freeing the device ...'); tic
             res = calllib(this.dll, 'AlpDevFree', this.device);
