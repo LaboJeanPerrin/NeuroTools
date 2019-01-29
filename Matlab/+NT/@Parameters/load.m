@@ -40,6 +40,7 @@ File = tmp{1};
 
 this.Signals = struct();
 this.Signals.DS = struct('tstart', {}, 'tstop', {}, 'default', {});
+this.Commands = struct('Target', {}, 'Command', {}, 'Time', {});
 
 % --- Parse file ----------------------------------------------------------
 
@@ -222,6 +223,20 @@ for i = 1:numel(File)
                 this.HM_Rate = convert(res, in.FrequencyUnit);
             end
             
+            % Delay before
+            res = regexp(line, '^DelayBefore\s+([\-\d\.]+)\s+(\S+)', 'tokens');
+            if ~isempty(res)
+                %this.DelayBefore = strtrim(res{1}{1});
+                this.DelayBefore = convert(res, in.TimeUnit);
+            end
+            
+            % Delay after
+            res = regexp(line, '^DelayAfter\s+([\-\d\.]+)\s+(\S+)', 'tokens');
+            if ~isempty(res)
+                %this.DelayAfter = strtrim(res{1}{1});
+                this.DelayAfter = convert(res, in.TimeUnit);
+            end
+            
         case 'Layers'
             
             % Number of layers
@@ -296,6 +311,18 @@ for i = 1:numel(File)
             res = regexp(line, '^Total time\s+([\-\d\.]+)\s+(\S+)', 'tokens');
             if ~isempty(res)                
                 this.RunTime = convert(res, in.TimeUnit);
+            end
+          
+        case 'Commands'    
+            
+            % Default values
+            res = regexp(line, '(\w+)\s+(\S+)\s+([\d\.]+)', 'tokens');
+            
+            if ~isempty(res)
+                j = numel(this.Commands)+1;
+                this.Commands(j).Target = res{1}{1};
+                this.Commands(j).Command = res{1}{2};
+                this.Commands(j).Time = str2double(res{1}{3});
             end
             
         case 'Signals'

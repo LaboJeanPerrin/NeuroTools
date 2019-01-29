@@ -37,6 +37,9 @@ classdef Parameters < handle
         HM_Shape
         HM_Rate
         
+        DelayBefore
+        DelayAfter
+        
         % --- Layers
         NLayers
         Exposure
@@ -53,6 +56,9 @@ classdef Parameters < handle
         CycleTime
         NFrames
         RunTime
+        
+        % --- Commands
+        Commands
         
         % --- Signals
         Signals
@@ -78,7 +84,7 @@ classdef Parameters < handle
                 'KVU', struct());
             
             % Default KVU
-            KVU = struct();
+            this.KVU = struct();
             
         end
         

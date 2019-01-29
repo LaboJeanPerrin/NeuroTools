@@ -1,0 +1,61 @@
+p {
+  font-size: 11px;
+  margin: 2px 10px;
+  padding: 0;
+  color: white;
+}
+
+.title1 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 7px 10px;
+  color: #39f;
+}
+
+.title2 {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 7px 10px;
+  color: #6cf;
+}
+
+.command {
+  color: #888;
+  font-style: italic;
+}
+
+.connection {
+  color: orange;
+  font-style: italic;
+}
+
+.warning {
+  color: orange;
+  font-weight: bold;
+}
+
+.critical {
+  color: red;
+  font-weight: bold;
+}
+
+.fatal {
+  color: black;
+  font-weight: bold;
+}
+
+.cameraInfo { 
+	border: 1px solid black; 
+	border-collapse: collapse;
+}
+
+.cameraInfo td {
+	background-color: #F5F5F5;
+	padding: 3px 10px;
+}
+
+.cameraInfo th {
+	background-color: #DDD;
+	vertical-align: middle;
+	padding: 0 10px;
+}

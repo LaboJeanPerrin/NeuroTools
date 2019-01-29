@@ -1,14 +1,14 @@
-classdef Focus<handle
+classdef Focus < handle
 %Focus Class providing access to NeuroTool datasets
     
     % --- PROPERTIES ------------------------------------------------------
     properties (Access = public)
         
+        rootdir
         study
         date
         run
         name
-        dir
         
         param
         frames
@@ -17,91 +17,97 @@ classdef Focus<handle
         
         sets
         set
+        IP       
         
+% This part is not implemented (TODO)
+        dx
+        dy
+        dt % currently, dt = delay + exposure (ignoring delay long)
+%         binning
+
+% empty structure to store analysis parameters
+        Analysis
+        extra % structure for extra information
+    end
+    
+    properties (Hidden)
+        dir % dictionnary of directories
+        tag % dictionnary of files
+        get % structure of functions
     end
     
     % --- METHODS ---------------------------------------------------------
     methods
         
         % _________________________________________________________________
-        function this = Focus(varargin)
+        function this = Focus(path, study, date, run, Analysis)
         %Focus::constructor
+        % call focus with NT.Focus(path, study, date, run)
         
-            % --- Inputs --------------------------------------------------
-            
-            in = ML.Input;
-            in.study = @ischar;
-            in.date = @ischar;
-            in.run = @(x) ischar(x) || isnumeric(x);
-            in.verbose(false) = @islogical;
-            in = +in;
+        % path:     root folder
+        % study:    name of study (if '', ignored)
+        % date:     date of experiment yyyy-mm-dd
+        % run:      run number
+        % Analysis: optional argument to get analysis parameters
                     
             % --- Basic properties ----------------------------------------
+
+            this.study = study;
+            this.date = date;
             
-            this.study = in.study;
-            this.date = in.date;
-            
-            if ischar(in.run)
-                this.run = in.run;
+            if ischar(run)
+                this.run = run;
             else
-                this.run = ['Run ' num2str(in.run, '%02i')];
+                this.run = ['Run ' num2str(run, '%02i')];
             end
-            this.name = [this.study ' - ' this.date ' (' this.run ')'];
+            
+            this.name = [this.study ' ' this.date ' (' this.run ')'];
+            
+            this.Analysis = struct(); % empty structure to store analysis parameters
+            
+            if exist('Analysis', 'var') % optionally fills with given parameters
+                this.Analysis = Analysis;
+            end
             
             % --- Directories ---------------------------------------------
         
             % Preparation
-            proj = ML.Projects.select;
-            this.dir = struct();
+            this.rootdir = path;
             
             % --- Data dir
             
-            this.dir.data = [proj.path 'Data' filesep this.study filesep this.date filesep this.run filesep];
+            sdr = fullfile(this.study, this.date, this.run); % study date run
+            [ this.dir, this.tag, this.get ] = this.architecture(this.rootdir, sdr); % loads architecture in focus
             
             % Check existence
-            if ~exist(this.dir.data, 'dir')
-                warning('Focus:Data', 'No data found for study=%s, date=%s and run=%i.', this.study, this.date, this.run);
+            if ~exist(this.dir('Run'), 'dir')
+                error('No data found in %s', this.dir('Run'));
             end
             
-            % --- Other folders
-            
-            this.dir.images = [this.dir.data 'Images' filesep];
-            this.dir.files = [this.dir.data 'Files' filesep];
-            this.dir.figures = [proj.path 'Figures' filesep];
-            this.dir.movies = [proj.path 'Movies' filesep];
-            
+            % --- create folders if necessary
+           
+            if ~exist(this.dir('Analysis'), 'dir')
+                disp('creating ''Analysis'' directory')
+                mkdir(this.dir('Analysis'));
+            end
+
             % --- Parameters ----------------------------------------------
-            
-            P = Parameters;
-            P.load([this.dir.data 'Parameters.txt']);
-            
-            kvufile = [this.dir.data 'KVU.txt'];
-            if exist(kvufile, 'file')
-                P.load_KVU(kvufile);
-            end
-                        
-            % --- Checks
-                        
-            % Study
-            if ~strcmp(this.study, P.Study)
-                error('Focus:Study', 'Studies do not match. This is a serious problem with the Parameters file.');
+                                    
+            if ~exist(this.tag('Parameters'), 'file')
+                error('No Parameter file found at \n%s\n', paramPath);
             end
             
-            % Date
-            if ~strcmp(this.date, P.Date)
-                error('Focus:Date', 'Dates do not match. This is a serious problem with the Parameters file.');
-            end
-            
-            % Run
-            if ~strcmp(this.run, P.RunName)
-                error('Focus:Run', 'Run names do not match. This is a serious problem with the Parameters file.');
-            end
-            
+            P = NT.Parameters;
+            P.load(this.tag('Parameters'));
+       
             % Set Parameters
             
+            % P.Version corresponds to the Lightsheet program version
+            % (not the parameter file version)
+            % the switch could be done on the parameter file version
             switch P.Version
             
-                case '4.1'
+                case {'4.1', '4.2', '4.3'}
                 
                     % --- Units
                     this.units = P.Units;
@@ -134,42 +140,12 @@ classdef Focus<handle
                     this.param.CycleTime = P.CycleTime;
                     this.param.NFrames = P.NFrames;
                     this.param.RunTime = P.RunTime;
-                    
-                    % --- KVU parameters
-                    keys = fieldnames(P.KVU);
-                    for i = 1:numel(keys)
-                        this.param.(keys{i}) = P.KVU.(keys{i});
-                        if isfield(P.Units.KVU, keys{i})
-                            this.units.KVU.(keys{i}) = P.Units.KVU.(keys{i});
-                        end
-                    end
-                    
+                                   
                     % --- Signals
                     this.stim = P.Signals;
-                                        
+                    
                 otherwise
                     warning('Focus:Parameters', 'Couldn''t read this version of the Parameters file.');
-            end
-            
-            % --- Frame information
-            if exist(this.dir.images, 'dir')
-                
-                Images = dir([this.dir.images '*.tif']);
-                if numel(Images)
-                    
-                    tmp = regexp(Images(1).name, '([^_]+_)(\d+)(\..*)', 'tokens');
-                    Img = imfinfo([this.dir.images Images(1).name]);
-                    
-                    this.frames = struct();
-                    this.frames.Number = numel(Images);
-                    this.frames.Prefix = tmp{1}{1};
-                    this.frames.Format = ['%0' num2str(numel(tmp{1}{2})) 'i'];
-                    this.frames.Extension = tmp{1}{3};
-                    this.frames.Width = Img.Width;
-                    this.frames.Height = Img.Height;
-                    this.frames.BitDepth = Img.BitDepth;
-                    
-                end
             end
             
             % --- Sets ----------------------------------------------------
@@ -197,20 +173,12 @@ classdef Focus<handle
                 
             end
             
-            % --- Default set
+            % default set
             this.select(1);
             
-            % --- Current Focus -------------------------------------------
-
-            % --- Define as current focus
-            gname = 'NeuroTools';
-            ML.Session.set(gname, 'Focus', this);
-
-            % --- Verbose
-            if in.verbose
-                ML.CW.print('The current focus is now ~bc[teal]{%s}.\n', this.name);
-            end
-            
+            % --- Config file ---
+            % if there is no config file, create it
+            NT.Config(this)
         end
     end
     
@@ -218,5 +186,6 @@ classdef Focus<handle
     methods (Static)
       define(varargin)
       F = current()
+      [dirs, tags, gets] = architecture(rootdir, sdr)
    end
 end
