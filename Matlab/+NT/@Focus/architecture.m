@@ -23,6 +23,7 @@ dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
         % stacks
         dirs('graystack')     = fullfile(dirs('Analysis'), 'graystack.stack');
             tags('graystack')     = fullfile(dirs('graystack'), 'graystack');
+            tags('graystackROI')     = fullfile(dirs('graystack'), 'graystackROI');
         dirs('refStack')     = fullfile(dirs('Analysis'), 'refStack.stack');
             tags('refStack')      = fullfile(dirs('refStack'), 'refStack');
         dirs('rawRAS')        = fullfile(dirs('Analysis'), 'rawRAS.stack');
