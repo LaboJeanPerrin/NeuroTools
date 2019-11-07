@@ -66,6 +66,10 @@ dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
                         'pmndff',...
                         {'amplitude', 'phase', 'deltaphi', 'realpart', 'imaginary'});
         dirs('HDF5')          = fullfile(dirs('Analysis'), 'HDF5');
+        dirs('Regression') = fullfile(dirs('Analysis'), 'Regression');
+            dirs('RegressionDFF') = fullfile(dirs('Regression'), 'dff');
+            	dirs('RegressionDFFPixel') = fullfile(dirs('RegressionDFF'), 'pixel');
+            	dirs('RegressionDFFNeuron') = fullfile(dirs('RegressionDFF'), 'neuron');
     dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
 
 % Programs folder
