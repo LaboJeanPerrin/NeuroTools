@@ -70,6 +70,7 @@ dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
             dirs('RegressionDFF') = fullfile(dirs('Regression'), 'dff');
             	dirs('RegressionDFFPixel') = fullfile(dirs('RegressionDFF'), 'pixel');
             	dirs('RegressionDFFNeuron') = fullfile(dirs('RegressionDFF'), 'neuron');
+            	dirs('RegressionDFFGrid') = fullfile(dirs('RegressionDFF'), 'grid');
     dirs('Garbage')     = fullfile(dirs('Run'), 'Garbage'); % unsorted files
 
 % Programs folder
