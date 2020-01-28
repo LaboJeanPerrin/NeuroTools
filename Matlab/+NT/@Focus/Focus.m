@@ -94,7 +94,7 @@ classdef Focus < handle
             % --- Parameters ----------------------------------------------
                                     
             if ~exist(this.tag('Parameters'), 'file')
-                error('No Parameter file found at \n%s\n', paramPath);
+                error('No Parameter file found in Run\n');
             end
             
             P = NT.Parameters;

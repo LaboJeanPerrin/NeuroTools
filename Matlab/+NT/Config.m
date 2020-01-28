@@ -81,7 +81,6 @@ elseif ~isempty(dir(fullfile(F.dir('Images'), '*.tif'))) % if source is tif
     
     % tells the focus he is working with tif
     config.Source = 'tif';     
-    config.SourceSpace = getSpace(F);        
     
     % --- Prepare images list
     images = dir(fullfile(F.dir('Images'), ['*.' ext]));
@@ -173,7 +172,7 @@ function configFields = imInfoToConfig(image)
     configFields.dy = configFields.dy * configFields.IP.Binning;
     
     % Get Image Processing parameters
-    regexpImg = regexp(image.name, '^(.*_?)([0-9]*)\.(.*)', 'tokens');
+    regexpImg = regexp(image.name, '^(.*_)([0-9]*)\.(.*)', 'tokens');
     configFields.IP.prefix = regexpImg{1}{1};
     configFields.IP.format = ['%0' num2str(numel(regexpImg{1}{2})) 'i'];
     configFields.IP.extension = regexpImg{1}{3};

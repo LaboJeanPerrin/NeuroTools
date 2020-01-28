@@ -4,7 +4,7 @@ function [dx, dy] = fcorr(this, Img, varargin)
 %   with image object IMG.
 %
 %*  See also: ML.Image, ML.Image.corr.
-
+try
 % === Input variables =====================================================
 
 in = inputParser;
@@ -47,4 +47,12 @@ switch in.Results.method
         dy = size(res,2)/2 + 1 + (x(3)^2*(y(1)-y(2)) + x(2)^2*(y(3)-y(1)) + x(1)^2*(y(2)-y(3)))/...
                                  (x(3)*(y(2)-y(1)) + x(2)*(y(1)-y(3)) + x(1)*(y(3)-y(2)))/2;
         
+end
+catch ME
+    disp(ME)
+    figure; imagesc(Img)
+    figure; imagesc(this.pix)
+    error('error')
+end
+
 end
