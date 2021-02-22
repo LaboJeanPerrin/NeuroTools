@@ -38,6 +38,7 @@ dirs('Run') = fullfile(dirs('Root'), 'Data', sdr);
         dirs('Background')    = fullfile(dirs('Analysis'), 'Background');
             tags('background')     = fullfile(dirs('Background'), 'background.mat');
         dirs('Drift')         = fullfile(dirs('Analysis'), 'Drift');
+        dirs('Deconvolution')         = fullfile(dirs('Analysis'), 'Deconvolution');
         dirs('Mask')          = fullfile(dirs('Analysis'), 'Mask');
             tags('mask')          = fullfile(dirs('Mask'), 'mask.mat');
         dirs('Registration')  = fullfile(dirs('Analysis'), 'Registration');
@@ -82,6 +83,7 @@ dirs('Programs') = fullfile(dirs('Root'), 'Programs');
     dirs('easyRLS') = fullfile(dirs('Programs'), 'easyRLS');
         dirs('caTools') = fullfile(dirs('easyRLS'), fullfile('Tools','caTools'));
     dirs('NeuroTools') = fullfile(dirs('Programs'), 'NeuroTools');
+    dirs('BSD') = fullfile(dirs('Programs'), 'BSD');
     
 % RefBrains folder
 dirs('RefBrains') = fullfile(dirs('Root'), 'RefBrains');
