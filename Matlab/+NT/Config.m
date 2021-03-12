@@ -154,17 +154,28 @@ function configFields = imInfoToConfig(image)
     configFields.IP.class = ['uint' num2str(info.BitDepth)];
     configFields.IP.date = info.FileModDate;
     configFields.IP.INFO = 'found by focus config on a sample tif image';
-    configFields.IP.description = info.ImageDescription;
-    % parse description
-    parsed = parseDescription(info.ImageDescription);
-    configFields.IP.Software = parsed.Software; 
-    configFields.IP.Binning = parsed.Binning;
+    
+    try % Hamamatsu camera
+        configFields.IP.description = info.ImageDescription;
+        % parse description
+        parsed = parseDescription(info.ImageDescription);
+        configFields.IP.Software = parsed.Software; 
+        configFields.IP.Binning = parsed.Binning;
+    catch % PCO camera has no field ImageDescription
+        configFields.IP.Software = info.Software;
+        configFields.IP.Binning = 1; % FIXME !!! default value
+    end
     fprintf('found width (%d) and height (%d) in %s\n', info.Width, info.Height, image(1).name);
 
     switch configFields.IP.Software
         case 'Hamamatsu'
             configFields.dx = 0.4; %µm
             configFields.dy = 0.4; %µm
+        case 'PCO_ExCv Version: B/W  '
+            disp("caméra PCO trouvée")
+            configFields.dx = 0.8;           % Voxel width (um)
+            configFields.dy = 0.8;           % Voxel height (um)
+            configFields.IP.camera = 'PCO.Edge';
         otherwise
             warning('%s camera case not implemented', configFields.IP.Software);
     end
